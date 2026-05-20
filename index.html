@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>St Gabriel Ethiopian Orthodox Church — Management</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-dark:   #042C53;
+    --blue-mid:    #0C447C;
+    --blue:        #185FA5;
+    --blue-light:  #85B7EB;
+    --blue-pale:   #E6F1FB;
+    --green-dark:  #27500A;
+    --green-mid:   #3B6D11;
+    --green:       #639922;
+    --green-pale:  #EAF3DE;
+    --amber-pale:  #FAEEDA;
+    --amber:       #854F0B;
+    --red-pale:    #FCEBEB;
+    --red:         #A32D2D;
+    --gray-50:     #F8F8F7;
+    --gray-100:    #F1EFE8;
+    --gray-200:    #D3D1C7;
+    --gray-400:    #888780;
+    --gray-600:    #5F5E5A;
+    --gray-900:    #2C2C2A;
+    --radius-sm:   6px;
+    --radius-md:   8px;
+    --radius-lg:   12px;
+    --radius-xl:   16px;
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── Layout ── */
+  .app { display: flex; height: 100vh; overflow: hidden; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 240px; flex-shrink: 0;
+    background: var(--blue-mid);
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .sidebar-brand {
+    padding: 24px 18px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sidebar-brand .icon {
+    width: 42px; height: 42px; border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: var(--blue-light);
+  }
+  .sidebar-brand .name { font-size: 16px; font-weight: 600; color: #fff; }
+  .sidebar-brand .sub  { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+  .nav { padding: 12px 10px; flex: 1; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: var(--radius-md);
+    color: rgba(255,255,255,0.6); font-size: 13.5px;
+    cursor: pointer; margin-bottom: 2px;
+    border: none; background: none; width: 100%; text-align: left;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+  .nav-item.active { background: rgba(255,255,255,0.14); color: #fff; }
+  .nav-item i { width: 18px; text-align: center; font-size: 15px; }
+  .sidebar-footer {
+    padding: 14px 18px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 11px; color: rgba(255,255,255,0.35); line-height: 1.6;
+  }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar {
+    background: #fff; border-bottom: 1px solid var(--gray-200);
+    padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .topbar h1 { font-size: 20px; font-weight: 600; color: var(--gray-900); }
+  .topbar-actions { display: flex; gap: 8px; align-items: center; }
+  .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+
+  /* ── Pages ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── Cards ── */
+  .card {
+    background: #fff; border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--gray-400); margin-bottom: 14px;
+  }
+
+  /* ── Metrics ── */
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .metric {
+    background: #fff; border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); padding: 14px 16px;
+  }
+  .metric-label { font-size: 12px; color: var(--gray-400); margin-bottom: 6px; }
+  .metric-value { font-size: 26px; font-weight: 600; color: var(--gray-900); }
+  .metric-value.green { color: var(--green-mid); }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 16px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 1px solid var(--gray-200); background: #fff;
+    color: var(--gray-900); transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--gray-50); border-color: var(--gray-400); }
+  .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .btn-primary:hover { background: var(--blue-mid); border-color: var(--blue-mid); }
+  .btn-success { background: var(--green-mid); color: #fff; border-color: var(--green-mid); }
+  .btn-success:hover { background: var(--green-dark); border-color: var(--green-dark); }
+  .btn-danger { background: #fff; color: var(--red); border-color: #F7C1C1; }
+  .btn-danger:hover { background: var(--red-pale); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-icon { padding: 6px 8px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-green { background: var(--green-pale); color: var(--green-mid); }
+  .badge-amber { background: var(--amber-pale); color: var(--amber); }
+  .badge-red   { background: var(--red-pale);   color: var(--red);   }
+  .badge-gray  { background: var(--gray-100);   color: var(--gray-600); }
+  .badge-blue  { background: var(--blue-pale);  color: var(--blue-mid); }
+
+  /* ── Forms ── */
+  .form-group { margin-bottom: 14px; }
+  .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--gray-600); margin-bottom: 5px; }
+  .form-control {
+    width: 100%; padding: 8px 11px;
+    border: 1px solid var(--gray-200); border-radius: var(--radius-md);
+    font-size: 13px; color: var(--gray-900); background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-control:focus { outline: none; border-color: var(--blue-light); box-shadow: 0 0 0 3px rgba(24,95,165,0.1); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400); padding: 8px 12px; border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-900); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--gray-50); }
+
+  /* ── Family Cards ── */
+  .family-card {
+    background: #fff; border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg); padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
+    transition: box-shadow 0.15s;
+  }
+  .family-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--blue-pale); color: var(--blue-mid);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; flex-shrink: 0;
+  }
+  .family-info { flex: 1; min-width: 0; }
+  .family-name { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .family-meta { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+  .family-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  /* ── Search ── */
+  .search-wrap { position: relative; margin-bottom: 16px; }
+  .search-wrap i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+  .search-wrap input { padding-left: 34px; }
+
+  /* ── Payment Summary ── */
+  .pay-summary {
+    background: var(--blue-pale); border: 1px solid #B5D4F4;
+    border-radius: var(--radius-md); padding: 10px 14px;
+    font-size: 13px; margin-bottom: 14px; display: none;
+  }
+  .pay-summary strong { color: var(--blue-mid); }
+
+  /* ── Day entries ── */
+  .day-entry {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+  }
+  .day-entry:last-child { border-bottom: none; }
+
+  /* ── Modal / Overlay ── */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 1000;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: var(--radius-xl);
+    padding: 24px; width: 100%; max-width: 440px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-title {
+    font-size: 16px; font-weight: 600; margin-bottom: 18px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-close { cursor: pointer; color: var(--gray-400); font-size: 18px; line-height: 1; }
+  .modal-close:hover { color: var(--gray-900); }
+
+  /* ── Receipt ── */
+  .receipt {
+    font-family: 'Courier New', monospace; font-size: 12px;
+    border: 2px solid var(--blue-mid); border-radius: var(--radius-md);
+    padding: 18px; line-height: 1.8; background: var(--gray-50);
+  }
+  .receipt-center { text-align: center; }
+  .receipt-divider { border-top: 1px dashed var(--gray-200); margin: 10px 0; }
+  .receipt-row { display: flex; justify-content: space-between; }
+  .receipt-total { text-align: center; padding: 8px 0; }
+  .receipt-amount { font-size: 28px; font-weight: 700; color: var(--green-mid); }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    padding: 11px 18px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500; z-index: 9999;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.25s, transform 0.25s;
+    pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.success { background: var(--green-mid); color: #fff; }
+  #toast.error   { background: var(--red);        color: #fff; }
+  #toast.info    { background: var(--blue);        color: #fff; }
+
+  /* ── Spinner ── */
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Setup Banner ── */
+  .setup-banner {
+    background: var(--amber-pale); border: 1px solid #FAC775;
+    border-radius: var(--radius-lg); padding: 14px 18px;
+    margin-bottom: 18px; font-size: 13px;
+  }
+  .setup-banner strong { color: var(--amber); }
+  .setup-banner a { color: var(--blue); }
+
+  /* ── Empty State ── */
+  .empty { text-align: center; padding: 48px 20px; color: var(--gray-400); }
+  .empty i { font-size: 36px; display: block; margin-bottom: 10px; }
+  .empty p { font-size: 14px; }
+
+  /* ── Sync status ── */
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .sync-dot.green { background: var(--green); }
+  .sync-dot.red   { background: var(--red); }
+  .sync-dot.gray  { background: var(--gray-400); }
+  #sync-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-400); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     SETUP INSTRUCTIONS (shown until configured)
+══════════════════════════════════════════════ -->
+<div id="setup-screen" style="display:none; max-width:700px; margin:60px auto; padding:0 20px;">
+  <div style="text-align:center; margin-bottom:32px;">
+    <i class="fa-solid fa-church" style="font-size:48px; color:var(--blue-mid);"></i>
+    <h1 style="font-size:26px; font-weight:700; margin-top:12px; color:var(--gray-900);">St Gabriel Church Management</h1>
+    <p style="color:var(--gray-600); margin-top:6px;">One-time setup required — connect your Google Sheet</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Google Sheets Backend Setup</div>
+    <ol style="line-height:2.2; color:var(--gray-600); font-size:13px; padding-left:18px; margin-bottom:20px;">
+      <li>Open <a href="https://sheets.google.com" target="_blank" style="color:var(--blue);">Google Sheets</a> and create a new spreadsheet named <strong>St Gabriel Church DB</strong>.</li>
+      <li>Create three sheets (tabs): <strong>Families</strong>, <strong>Payments</strong>, <strong>Config</strong>.</li>
+      <li>In the <strong>Families</strong> tab, add headers in row 1:<br><code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px;">id | husband | wife | address | children | createdAt</code></li>
+      <li>In the <strong>Payments</strong> tab, add headers in row 1:<br><code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px;">id | familyId | date | type | periodFrom | periodTo | amount | method | timestamp</code></li>
+      <li>In your spreadsheet, click <strong>Extensions → Apps Script</strong>.</li>
+      <li>Delete any existing code and paste the <strong>Apps Script code</strong> from the <code>google_apps_script.js</code> file.</li>
+      <li>Click <strong>Deploy → New deployment</strong>, choose <strong>Web app</strong>, set "Who has access" to <strong>Anyone</strong>, click Deploy.</li>
+      <li>Copy the <strong>Web App URL</strong> and paste it below.</li>
+    </ol>
+    <div class="form-group">
+      <label class="form-label">Google Apps Script Web App URL</label>
+      <input type="text" id="setup-url" class="form-control" placeholder="https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec">
+    </div>
+    <button class="btn btn-primary" onclick="saveSetup()" style="width:100%"><i class="fa-solid fa-check"></i> Save & Launch App</button>
+  </div>
+  <p style="text-align:center; margin-top:16px; font-size:12px; color:var(--gray-400);">
+    Data is stored in your private Google Sheet. This app runs entirely in your browser.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════════════ -->
+<div id="app" class="app" style="display:none;">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="icon"><i class="fa-solid fa-church"></i></div>
+      <div>
+        <div class="name">St Gabriel</div>
+        <div class="sub">Ethiopian Orthodox Church</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" onclick="showPage('families',this)">
+        <i class="fa-solid fa-users"></i> Families
+      </button>
+      <button class="nav-item" onclick="showPage('payments',this)">
+        <i class="fa-solid fa-money-bill-wave"></i> Collect Fees
+      </button>
+      <button class="nav-item" onclick="showPage('daily',this)">
+        <i class="fa-solid fa-calendar-day"></i> Daily Collections
+      </button>
+      <button class="nav-item" onclick="showPage('reports',this)">
+        <i class="fa-solid fa-chart-bar"></i> Payment Report
+      </button>
+      <button class="nav-item" onclick="showPage('settings',this)" style="margin-top:auto;">
+        <i class="fa-solid fa-gear"></i> Settings
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      2216 Goldsmith Lane<br>Louisville, KY 40218
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">Families</h1>
+      <div class="topbar-actions">
+        <div id="sync-status"><span class="sync-dot gray" id="sync-dot"></span><span id="sync-text">Not synced</span></div>
+        <div id="topbar-btn"></div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ── FAMILIES ── -->
+      <div id="page-families" class="page active">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" class="form-control" id="family-search" placeholder="Search by name or address…" oninput="renderFamilies()">
+        </div>
+        <div id="families-list"></div>
+      </div>
+
+      <!-- ── PAYMENTS ── -->
+      <div id="page-payments" class="page">
+        <div class="card">
+          <div class="card-title">Record a Payment</div>
+          <div class="form-group">
+            <label class="form-label">Family</label>
+            <select id="pay-family" class="form-control" onchange="updatePaySummary()">
+              <option value="">— Select a family —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Type</label>
+            <select id="pay-type" class="form-control" onchange="onTypeChange()">
+              <option value="">— Select type —</option>
+              <option>Membership</option>
+              <option>Tithes</option>
+              <option>Christening</option>
+              <option>Gift</option>
+              <option>Seelet</option>
+              <option>Prayer Request</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div id="month-range-section">
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">From Month</label>
+                <select id="pay-from" class="form-control" onchange="updatePaySummary()"></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">To Month</label>
+                <select id="pay-to" class="form-control" onchange="updatePaySummary()"></select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amount ($)</label>
+            <input type="number" id="pay-amount" class="form-control" placeholder="0.00" min="0" step="0.01" oninput="updatePaySummary()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <select id="pay-method" class="form-control">
+              <option>Cash</option><option>Check</option><option>Zelle</option><option>PayPal</option><option>Other</option>
+            </select>
+          </div>
+          <div id="pay-summary" class="pay-summary"></div>
+          <button id="pay-btn" class="btn btn-success" onclick="processPayment()" style="width:100%; justify-content:center; padding:11px;">
+            <i class="fa-solid fa-receipt"></i> Record Payment &amp; Print Receipt
+          </button>
+        </div>
+      </div>
+
+      <!-- ── DAILY ── -->
+      <div id="page-daily" class="page">
+        <div class="metrics-grid">
+          <div class="metric"><div class="metric-label">Today's Total</div><div class="metric-value green" id="daily-total">$0.00</div></div>
+          <div class="metric"><div class="metric-label">Transactions</div><div class="metric-value" id="daily-count">0</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title" id="daily-date-label">Today</div>
+          <div id="daily-list"></div>
+        </div>
+      </div>
+
+      <!-- ── REPORTS ── -->
+      <div id="page-reports" class="page">
+        <div class="metrics-grid">
+          <div class="metric"><div class="metric-label">Total Collected</div><div class="metric-value green" id="rpt-total">$0.00</div></div>
+          <div class="metric"><div class="metric-label">Families Paid This Month</div><div class="metric-value" id="rpt-month">0</div></div>
+          <div class="metric"><div class="metric-label">Total Families</div><div class="metric-value" id="rpt-families">0</div></div>
+          <div class="metric"><div class="metric-label">Total Payments</div><div class="metric-value" id="rpt-payments">0</div></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div class="card-title" style="margin-bottom:0">All Payments</div>
+            <button class="btn btn-sm" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+          </div>
+          <div class="table-wrap" id="report-table"></div>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS ── -->
+      <div id="page-settings" class="page">
+        <div class="card">
+          <div class="card-title">Google Sheets Connection</div>
+          <div class="form-group">
+            <label class="form-label">Apps Script Web App URL</label>
+            <input type="text" id="settings-url" class="form-control" placeholder="https://script.google.com/macros/s/…/exec">
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="saveSettings()"><i class="fa-solid fa-save"></i> Save URL</button>
+            <button class="btn" onclick="testConnection()"><i class="fa-solid fa-plug"></i> Test Connection</button>
+            <button class="btn" onclick="syncAll()"><i class="fa-solid fa-rotate"></i> Force Sync</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Local Cache</div>
+          <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">Families and payments are cached locally for offline use. Click sync to refresh from Google Sheets.</p>
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="syncAll()"><i class="fa-solid fa-cloud-arrow-down"></i> Pull from Sheets</button>
+            <button class="btn btn-danger" onclick="clearCache()"><i class="fa-solid fa-trash"></i> Clear Local Cache</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">About</div>
+          <p style="font-size:13px;color:var(--gray-600);line-height:1.8">
+            <strong>St Gabriel Ethiopian Orthodox Church</strong><br>
+            Management System v2.0<br>
+            Data stored in Google Sheets · Runs fully in your browser<br>
+            No third-party servers · Privacy-first
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- Overlay / Modal -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONFIG & STATE
+// ═══════════════════════════════════════════════
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+let GAS_URL  = localStorage.getItem('sg_gas_url') || '';
+let families = JSON.parse(localStorage.getItem('sg_families') || '[]');
+let payments = JSON.parse(localStorage.getItem('sg_payments') || '[]');
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+function init() {
+  if (!GAS_URL) {
+    document.getElementById('setup-screen').style.display = 'block';
+  } else {
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('settings-url').value = GAS_URL;
+    renderFamilies();
+    renderReports();
+    renderDaily();
+    populateFamilySelect();
+    populateMonths();
+    syncAll();
+  }
+}
+
+function saveSetup() {
+  const url = document.getElementById('setup-url').value.trim();
+  if (!url.startsWith('https://script.google.com')) {
+    alert('Please enter a valid Google Apps Script URL.');
+    return;
+  }
+  GAS_URL = url;
+  localStorage.setItem('sg_gas_url', url);
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('settings-url').value = url;
+  populateFamilySelect();
+  populateMonths();
+  showPage('families', document.querySelector('.nav-item'));
+  syncAll();
+}
+
+// ═══════════════════════════════════════════════
+//  GOOGLE SHEETS API
+// ═══════════════════════════════════════════════
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  dot.className = 'sync-dot ' + state;
+  if (txt) txt.textContent = text;
+}
+
+async function gasRequest(action, data = {}) {
+  if (!GAS_URL) throw new Error('No API URL configured');
+  const params = new URLSearchParams({ action, ...Object.fromEntries(Object.entries(data).map(([k,v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v])) });
+  const res = await fetch(GAS_URL + '?' + params.toString());
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'Unknown error');
+  return json;
+}
+
+async function syncAll() {
+  setSyncStatus('gray', 'Syncing…');
+  try {
+    const [fRes, pRes] = await Promise.all([
+      gasRequest('getFamilies'),
+      gasRequest('getPayments')
+    ]);
+    families = fRes.data;
+    payments = pRes.data;
+    saveLocal();
+    setSyncStatus('green', 'Synced ' + new Date().toLocaleTimeString());
+    renderFamilies();
+    renderReports();
+    renderDaily();
+    populateFamilySelect();
+    toast('Synced with Google Sheets', 'success');
+  } catch(e) {
+    setSyncStatus('red', 'Sync failed');
+    toast('Sync failed: ' + e.message, 'error');
+  }
+}
+
+async function pushFamily(fam) {
+  return gasRequest('addFamily', { data: fam });
+}
+
+async function pushPayment(pay) {
+  return gasRequest('addPayment', { data: pay });
+}
+
+async function deleteRemoteFamily(id) {
+  return gasRequest('deleteFamily', { id });
+}
+
+// ═══════════════════════════════════════════════
+//  LOCAL STORAGE
+// ═══════════════════════════════════════════════
+function saveLocal() {
+  localStorage.setItem('sg_families', JSON.stringify(families));
+  localStorage.setItem('sg_payments', JSON.stringify(payments));
+}
+
+function clearCache() {
+  if (!confirm('Clear all locally cached data? (Your Google Sheet data is safe.)')) return;
+  families = [];
+  payments = [];
+  saveLocal();
+  renderFamilies();
+  renderReports();
+  renderDaily();
+  toast('Local cache cleared', 'info');
+}
+
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
+function initials(f) {
+  const p = f.husband.split(' ');
+  return (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase();
+}
+
+function monthDiff(a, b) {
+  const [am, ay] = a.split(' ');
+  const [bm, by] = b.split(' ');
+  return (parseInt(by) - parseInt(ay)) * 12 + (MONTHS.indexOf(bm) - MONTHS.indexOf(am)) + 1;
+}
+
+function getStatus(fid) {
+  const fp = payments.filter(p => +p.familyId === +fid);
+  if (!fp.length) return 'none';
+  fp.sort((a,b) => b.id - a.id);
+  const last = fp[0];
+  const now  = new Date();
+  const [toM, toY] = last.periodTo.split(' ');
+  const toDate = new Date(parseInt(toY), MONTHS.indexOf(toM) + 1, 0);
+  if (toDate >= now) return 'current';
+  const diff = (now - toDate) / (1000*60*60*24*30);
+  return diff > 2 ? 'overdue' : 'warning';
+}
+
+function statusBadge(s) {
+  if (s === 'current') return '<span class="badge badge-green"><i class="fa-solid fa-circle-check fa-xs"></i> Current</span>';
+  if (s === 'overdue') return '<span class="badge badge-red"><i class="fa-solid fa-circle-exclamation fa-xs"></i> Overdue</span>';
+  if (s === 'warning') return '<span class="badge badge-amber"><i class="fa-solid fa-clock fa-xs"></i> Due Soon</span>';
+  return '<span class="badge badge-gray">No Record</span>';
+}
+
+function today() {
+  return new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+}
+
+function toast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  setTimeout(() => { el.className = ''; }, 3000);
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER FAMILIES
+// ═══════════════════════════════════════════════
+function renderFamilies() {
+  const q  = (document.getElementById('family-search')?.value || '').toLowerCase();
+  const el = document.getElementById('families-list');
+  if (!el) return;
+  const filtered = families.filter(f =>
+    (f.husband + ' ' + f.wife + ' ' + f.address).toLowerCase().includes(q)
+  );
+  if (!filtered.length) {
+    el.innerHTML = '<div class="empty"><i class="fa-solid fa-users-slash"></i><p>No families found</p></div>';
+    return;
+  }
+  el.innerHTML = filtered.map(f => {
+    const st  = getStatus(f.id);
+    const kids = Array.isArray(f.children)
+      ? (f.children.length ? f.children.join(', ') : 'No children')
+      : (f.children || 'No children');
+    return `<div class="family-card">
+      <div class="avatar">${initials(f)}</div>
+      <div class="family-info">
+        <div class="family-name">${f.husband} &amp; ${f.wife}</div>
+        <div class="family-meta">${f.address || '—'} · ${kids}</div>
+      </div>
+      <div class="family-actions">
+        ${statusBadge(st)}
+        <button class="btn btn-sm btn-icon" title="View" onclick="openFamilyModal(${f.id})"><i class="fa-solid fa-eye"></i></button>
+        <button class="btn btn-sm btn-icon btn-danger" title="Delete" onclick="deleteFamily(${f.id})"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  FAMILY MODAL
+// ═══════════════════════════════════════════════
+function openFamilyModal(id) {
+  const f  = families.find(x => +x.id === +id);
+  const fp = payments.filter(p => +p.familyId === +id).sort((a,b) => b.id - a.id);
+  const st = getStatus(id);
+  const kids = Array.isArray(f.children)
+    ? (f.children.length ? f.children.join(', ') : 'None listed')
+    : (f.children || 'None listed');
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">
+      Family Details
+      <span class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div class="avatar" style="width:50px;height:50px;font-size:16px">${initials(f)}</div>
+      <div>
+        <div style="font-weight:600;font-size:15px">${f.husband} &amp; ${f.wife}</div>
+        <div style="font-size:12px;color:var(--gray-400)">${f.address || '—'}</div>
+      </div>
+    </div>
+    ${statusBadge(st)}
+    <div style="margin:12px 0;font-size:13px;color:var(--gray-600)"><strong>Children:</strong> ${kids}</div>
+    <div class="card-title" style="margin-top:18px">Payment History</div>
+    ${fp.length ? fp.slice(0,6).map(p => `
+      <div class="day-entry">
+        <div>
+          <div style="font-size:13px;font-weight:500">${p.type || '—'}${p.type === 'Membership' ? ` · ${p.periodFrom} – ${p.periodTo}` : ''}</div>
+          <div style="font-size:11px;color:var(--gray-400)">${p.date} · ${p.method}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <strong style="color:var(--green-mid)">$${parseFloat(p.amount).toFixed(2)}</strong>
+          <button class="btn btn-sm btn-icon" onclick="showReceipt(payments.find(x=>+x.id===${p.id}))"><i class="fa-solid fa-receipt"></i></button>
+        </div>
+      </div>`).join('') : '<p style="font-size:13px;color:var(--gray-400)">No payments on record.</p>'}
+    <div style="display:flex;gap:8px;margin-top:18px">
+      <button class="btn btn-primary" style="flex:1" onclick="closeModal();showPage('payments',document.querySelectorAll('.nav-item')[1]);setTimeout(()=>preselectFamily(${id}),50)">
+        <i class="fa-solid fa-money-bill-wave"></i> Collect Fee
+      </button>
+      <button class="btn" onclick="closeModal()">Close</button>
+    </div>`;
+  openModal();
+}
+
+function openAddFamilyModal() {
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">
+      Add New Family
+      <span class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <div class="form-group"><label class="form-label">Husband's Full Name *</label><input id="nf-h" class="form-control" placeholder="e.g. Michael Haile"></div>
+    <div class="form-group"><label class="form-label">Wife's Full Name *</label><input id="nf-w" class="form-control" placeholder="e.g. Sara Haile"></div>
+    <div class="form-group"><label class="form-label">Address</label><input id="nf-a" class="form-control" placeholder="Street address, Louisville KY"></div>
+    <div class="form-group"><label class="form-label">Children (comma-separated)</label><input id="nf-c" class="form-control" placeholder="e.g. Daniel, Ruth, Liya"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button id="add-fam-btn" class="btn btn-primary" style="flex:1" onclick="addFamily()"><i class="fa-solid fa-user-plus"></i> Add Family</button>
+      <button class="btn" onclick="closeModal()">Cancel</button>
+    </div>`;
+  openModal();
+}
+
+async function addFamily() {
+  const h = document.getElementById('nf-h').value.trim();
+  const w = document.getElementById('nf-w').value.trim();
+  const a = document.getElementById('nf-a').value.trim();
+  const c = document.getElementById('nf-c').value.trim();
+  if (!h || !w) { toast('Please enter both names.', 'error'); return; }
+  const btn = document.getElementById('add-fam-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving…';
+  const newId = families.length ? Math.max(...families.map(f => +f.id)) + 1 : 1;
+  const fam = {
+    id: newId, husband: h, wife: w, address: a || '',
+    children: c ? c.split(',').map(x => x.trim()).filter(Boolean) : [],
+    createdAt: new Date().toISOString()
+  };
+  try {
+    await pushFamily(fam);
+    families.push(fam);
+    saveLocal();
+    closeModal();
+    renderFamilies();
+    populateFamilySelect();
+    toast('Family added and saved to Google Sheets!', 'success');
+  } catch(e) {
+    toast('Error saving: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Add Family';
+  }
+}
+
+async function deleteFamily(id) {
+  const f = families.find(x => +x.id === +id);
+  if (!confirm(`Remove ${f?.husband} & ${f?.wife}?`)) return;
+  try {
+    await deleteRemoteFamily(id);
+    families = families.filter(x => +x.id !== +id);
+    saveLocal();
+    renderFamilies();
+    populateFamilySelect();
+    toast('Family removed.', 'success');
+  } catch(e) {
+    toast('Error: ' + e.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  PAYMENTS
+// ═══════════════════════════════════════════════
+function populateFamilySelect() {
+  const sel = document.getElementById('pay-family');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— Select a family —</option>' +
+    families.map(f => `<option value="${f.id}">${f.husband} &amp; ${f.wife}</option>`).join('');
+  if (cur) sel.value = cur;
+}
+
+function populateMonths() {
+  const now  = new Date();
+  const opts = [];
+  for (let i = -18; i <= 24; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const label = `${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+    opts.push(`<option value="${label}">${label}</option>`);
+  }
+  const html = opts.join('');
+  const curLabel = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+  const fromEl = document.getElementById('pay-from');
+  const toEl   = document.getElementById('pay-to');
+  if (fromEl) { fromEl.innerHTML = html; fromEl.value = curLabel; }
+  if (toEl)   { toEl.innerHTML   = html; toEl.value   = curLabel; }
+}
+
+function preselectFamily(id) {
+  const sel = document.getElementById('pay-family');
+  if (sel) { sel.value = id; updatePaySummary(); }
+}
+
+function onTypeChange() {
+  const type = document.getElementById('pay-type')?.value;
+  const section = document.getElementById('month-range-section');
+  if (section) section.style.display = (type === 'Membership') ? 'block' : 'none';
+  updatePaySummary();
+}
+
+function updatePaySummary() {
+  const fid  = document.getElementById('pay-family')?.value;
+  const type = document.getElementById('pay-type')?.value;
+  const from = document.getElementById('pay-from')?.value;
+  const to   = document.getElementById('pay-to')?.value;
+  const amt  = parseFloat(document.getElementById('pay-amount')?.value || 0);
+  const el   = document.getElementById('pay-summary');
+  if (!el) return;
+  if (!fid || !type || !amt || isNaN(amt)) { el.style.display = 'none'; return; }
+  if (type === 'Membership') {
+    if (!from || !to) { el.style.display = 'none'; return; }
+    const diff = monthDiff(from, to);
+    if (diff < 1) { el.style.display = 'none'; return; }
+    const pm = (amt / diff).toFixed(2);
+    el.style.display = 'block';
+    el.innerHTML = `<strong>${type}</strong> &nbsp;·&nbsp; <strong>${diff} month${diff>1?'s':''}</strong> &nbsp;·&nbsp; <strong>$${pm}/month</strong> &nbsp;·&nbsp; Total: <strong>$${amt.toFixed(2)}</strong>`;
+  } else {
+    el.style.display = 'block';
+    el.innerHTML = `<strong>${type}</strong> &nbsp;·&nbsp; Total: <strong>$${amt.toFixed(2)}</strong>`;
+  }
+}
+
+async function processPayment() {
+  const fid    = parseInt(document.getElementById('pay-family').value);
+  const type   = document.getElementById('pay-type').value;
+  const from   = document.getElementById('pay-from')?.value;
+  const to     = document.getElementById('pay-to')?.value;
+  const amt    = parseFloat(document.getElementById('pay-amount').value);
+  const method = document.getElementById('pay-method').value;
+  if (!fid || !type) { toast('Please select a family and payment type.', 'error'); return; }
+  if (isNaN(amt) || amt <= 0) { toast('Please enter a valid amount.', 'error'); return; }
+  if (type === 'Membership' && (!from || !to || monthDiff(from, to) < 1)) {
+    toast('Please select a valid month range for Membership.', 'error'); return;
+  }
+  const btn = document.getElementById('pay-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Processing…';
+  const pid = payments.length ? Math.max(...payments.map(p => +p.id)) + 1 : 1001;
+  const pay = {
+    id: pid, familyId: fid,
+    date: today(),
+    type,
+    periodFrom: type === 'Membership' ? from : '—',
+    periodTo:   type === 'Membership' ? to   : '—',
+    amount: amt, method,
+    timestamp: Date.now()
+  };
+  try {
+    await pushPayment(pay);
+    payments.push(pay);
+    saveLocal();
+    document.getElementById('pay-amount').value = '';
+    document.getElementById('pay-type').value = '';
+    onTypeChange();
+    updatePaySummary();
+    renderDaily();
+    renderReports();
+    toast('Payment recorded!', 'success');
+    showReceipt(pay);
+  } catch(e) {
+    toast('Error: ' + e.message, 'error');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-receipt"></i> Record Payment &amp; Print Receipt';
+}
+
+// ═══════════════════════════════════════════════
+//  RECEIPT
+// ═══════════════════════════════════════════════
+function showReceipt(pay) {
+  if (!pay) return;
+  const f       = families.find(x => +x.id === +pay.familyId);
+  const isMem   = pay.type === 'Membership';
+  const diff    = isMem ? monthDiff(pay.periodFrom, pay.periodTo) : null;
+  const pm      = isMem ? (parseFloat(pay.amount) / diff).toFixed(2) : null;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">
+      Receipt
+      <span class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
+    </div>
+    <div class="receipt">
+      <div class="receipt-center" style="margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700;letter-spacing:1px">ST GABRIEL</div>
+        <div style="font-size:12px">Ethiopian Orthodox Church</div>
+        <div style="font-size:11px;color:var(--gray-600)">2216 Goldsmith Lane · Louisville, KY 40218</div>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-center" style="font-size:11px;color:var(--gray-600);margin-bottom:8px">OFFICIAL RECEIPT — ${(pay.type||'PAYMENT').toUpperCase()}</div>
+      <div class="receipt-row"><span>Receipt #</span><strong>#${pay.id}</strong></div>
+      <div class="receipt-row"><span>Date</span><strong>${pay.date}</strong></div>
+      <div class="receipt-row"><span>Family</span><strong>${f ? f.husband + ' & ' + f.wife : '—'}</strong></div>
+      <div class="receipt-row"><span>Payment Type</span><strong>${pay.type || '—'}</strong></div>
+      ${isMem ? `
+      <div class="receipt-row"><span>Period</span><strong>${pay.periodFrom} – ${pay.periodTo}</strong></div>
+      <div class="receipt-row"><span>Months</span><strong>${diff}</strong></div>
+      <div class="receipt-row"><span>Per Month</span><strong>$${pm}</strong></div>` : ''}
+      <div class="receipt-row"><span>Method</span><strong>${pay.method}</strong></div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-total">
+        <div style="font-size:11px;color:var(--gray-600);margin-bottom:4px">TOTAL AMOUNT PAID</div>
+        <div class="receipt-amount">$${parseFloat(pay.amount).toFixed(2)}</div>
+      </div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-center" style="font-size:11px;color:var(--gray-600);line-height:1.8">
+        Thank you for your faithful support!<br>
+        <em>"Every man according as he purposeth in his heart,<br>so let him give." — 2 Corinthians 9:7</em>
+      </div>
+      <div style="margin-top:14px;font-size:11px;color:var(--gray-600);border-top:1px solid var(--gray-200);padding-top:10px">
+        Received by: ________________________<br>Treasurer / Administrator
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="flex:1" onclick="printReceipt(${pay.id})"><i class="fa-solid fa-print"></i> Print</button>
+      <button class="btn" onclick="closeModal()">Close</button>
+    </div>`;
+  openModal();
+}
+
+function printReceipt(pid) {
+  const pay = payments.find(p => +p.id === +pid);
+  if (!pay) return;
+  const f     = families.find(x => +x.id === +pay.familyId);
+  const isMem = pay.type === 'Membership';
+  const diff  = isMem ? monthDiff(pay.periodFrom, pay.periodTo) : null;
+  const pm    = isMem ? (parseFloat(pay.amount) / diff).toFixed(2) : null;
+  const w     = window.open('', '', 'width=440,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><title>Receipt #${pay.id}</title>
+  <style>
+    body{font-family:'Courier New',monospace;padding:32px;font-size:13px;line-height:1.9;color:#222;}
+    h2{text-align:center;font-size:22px;letter-spacing:2px;margin:0;}
+    .sub{text-align:center;font-size:12px;color:#666;margin:2px 0;}
+    .div{border-top:1px dashed #aaa;margin:12px 0;}
+    .row{display:flex;justify-content:space-between;}
+    .total{text-align:center;padding:8px 0;}
+    .amt{font-size:30px;font-weight:700;color:#3B6D11;}
+    .sig{margin-top:20px;font-size:12px;color:#555;}
+    .verse{text-align:center;font-size:11px;color:#777;font-style:italic;line-height:1.7;}
+  </style>
+  </head><body>
+  <h2>ST GABRIEL</h2>
+  <div class="sub">Ethiopian Orthodox Church</div>
+  <div class="sub">2216 Goldsmith Lane · Louisville, KY 40218</div>
+  <div class="div"></div>
+  <div class="sub">OFFICIAL RECEIPT — ${(pay.type||'PAYMENT').toUpperCase()}</div>
+  <div class="div"></div>
+  <div class="row"><span>Receipt #</span><strong>#${pay.id}</strong></div>
+  <div class="row"><span>Date</span><strong>${pay.date}</strong></div>
+  <div class="row"><span>Family</span><strong>${f ? f.husband+' & '+f.wife : '—'}</strong></div>
+  <div class="row"><span>Payment Type</span><strong>${pay.type||'—'}</strong></div>
+  ${isMem ? `
+  <div class="row"><span>Period</span><strong>${pay.periodFrom} – ${pay.periodTo}</strong></div>
+  <div class="row"><span>Months</span><strong>${diff}</strong></div>
+  <div class="row"><span>Per Month</span><strong>$${pm}</strong></div>` : ''}
+  <div class="row"><span>Method</span><strong>${pay.method}</strong></div>
+  <div class="div"></div>
+  <div class="total"><div style="font-size:11px;color:#888;">TOTAL AMOUNT PAID</div><div class="amt">$${parseFloat(pay.amount).toFixed(2)}</div></div>
+  <div class="div"></div>
+  <div class="verse">Thank you for your faithful support!<br>"Every man according as he purposeth in his heart, so let him give." — 2 Corinthians 9:7</div>
+  <div class="sig">Received by: ________________________<br>Treasurer / Administrator</div>
+  </body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 400);
+}
+
+// ═══════════════════════════════════════════════
+//  DAILY
+// ═══════════════════════════════════════════════
+function renderDaily() {
+  const td  = today();
+  const tp  = payments.filter(p => p.date === td);
+  const tot = tp.reduce((s, p) => s + parseFloat(p.amount), 0);
+  const el  = document.getElementById('daily-list');
+  const label = document.getElementById('daily-date-label');
+  if (label) label.textContent = 'Today — ' + td;
+  const totEl = document.getElementById('daily-total');
+  const cntEl = document.getElementById('daily-count');
+  if (totEl) totEl.textContent = '$' + tot.toFixed(2);
+  if (cntEl) cntEl.textContent = tp.length;
+  if (!el) return;
+  if (!tp.length) {
+    el.innerHTML = '<div class="empty"><i class="fa-solid fa-calendar-xmark"></i><p>No collections today</p></div>';
+    return;
+  }
+  el.innerHTML = tp.map(p => {
+    const f = families.find(x => +x.id === +p.familyId);
+    const detail = p.type === 'Membership' ? `${p.periodFrom} – ${p.periodTo}` : (p.type || '—');
+    return `<div class="day-entry">
+      <div>
+        <div style="font-weight:600;font-size:13px">${f ? f.husband + ' & ' + f.wife : 'Unknown'}</div>
+        <div style="font-size:11px;color:var(--gray-400)">${detail} · ${p.method}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge badge-blue" style="font-size:10px">${p.type||'—'}</span>
+        <strong style="color:var(--green-mid)">$${parseFloat(p.amount).toFixed(2)}</strong>
+        <button class="btn btn-sm btn-icon" onclick="showReceipt(payments.find(x=>+x.id===${p.id}))"><i class="fa-solid fa-receipt"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  REPORTS
+// ═══════════════════════════════════════════════
+function renderReports() {
+  const total = payments.reduce((s, p) => s + parseFloat(p.amount), 0);
+  const now   = new Date();
+  const curM  = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+  const paidM = new Set(payments.filter(p => {
+    try { return monthDiff(p.periodFrom, curM) >= 1 && monthDiff(curM, p.periodTo) >= 1; }
+    catch(e) { return false; }
+  }).map(p => p.familyId)).size;
+
+  const totEl = document.getElementById('rpt-total');
+  const monEl = document.getElementById('rpt-month');
+  const famEl = document.getElementById('rpt-families');
+  const payEl = document.getElementById('rpt-payments');
+  if (totEl) totEl.textContent = '$' + total.toFixed(2);
+  if (monEl) monEl.textContent = paidM;
+  if (famEl) famEl.textContent = families.length;
+  if (payEl) payEl.textContent = payments.length;
+
+  const el = document.getElementById('report-table');
+  if (!el) return;
+  if (!payments.length) {
+    el.innerHTML = '<div class="empty"><i class="fa-solid fa-file-invoice-dollar"></i><p>No payment records</p></div>';
+    return;
+  }
+  const sorted = [...payments].sort((a,b) => b.id - a.id);
+  el.innerHTML = `<table>
+    <thead><tr>
+      <th>#</th><th>Date</th><th>Family</th><th>Type</th><th>Period</th><th>Method</th>
+      <th style="text-align:right">Amount</th><th></th>
+    </tr></thead>
+    <tbody>${sorted.map(p => {
+      const f      = families.find(x => +x.id === +p.familyId);
+      const period = p.type === 'Membership' ? `${p.periodFrom} – ${p.periodTo}` : '—';
+      return `<tr>
+        <td style="color:var(--gray-400);font-size:12px">${p.id}</td>
+        <td style="font-size:12px;color:var(--gray-600)">${p.date}</td>
+        <td>${f ? f.husband.split(' ')[0]+' family' : '—'}</td>
+        <td><span class="badge badge-blue">${p.type||'—'}</span></td>
+        <td style="font-size:12px;color:var(--gray-600)">${period}</td>
+        <td><span class="badge badge-gray">${p.method}</span></td>
+        <td style="text-align:right;font-weight:600;color:var(--green-mid)">$${parseFloat(p.amount).toFixed(2)}</td>
+        <td><button class="btn btn-sm btn-icon" onclick="showReceipt(payments.find(x=>+x.id===${p.id}))"><i class="fa-solid fa-receipt"></i></button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+// ═══════════════════════════════════════════════
+//  EXPORT CSV
+// ═══════════════════════════════════════════════
+function exportCSV() {
+  const rows = [['Receipt#','Date','Family','Type','PeriodFrom','PeriodTo','Amount','Method']];
+  payments.forEach(p => {
+    const f = families.find(x => +x.id === +p.familyId);
+    rows.push([p.id, p.date, f ? f.husband + ' & ' + f.wife : '?', p.type||'—', p.periodFrom||'—', p.periodTo||'—', parseFloat(p.amount).toFixed(2), p.method]);
+  });
+  const csv  = rows.map(r => r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'st_gabriel_payments.csv';
+  a.click();
+}
+
+// ═══════════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════════
+function saveSettings() {
+  const url = document.getElementById('settings-url').value.trim();
+  if (!url) { toast('Please enter a URL.', 'error'); return; }
+  GAS_URL = url;
+  localStorage.setItem('sg_gas_url', url);
+  toast('URL saved!', 'success');
+}
+
+async function testConnection() {
+  const url = document.getElementById('settings-url').value.trim();
+  if (!url) { toast('Enter a URL first.', 'error'); return; }
+  GAS_URL = url;
+  try {
+    await gasRequest('getFamilies');
+    toast('Connection successful!', 'success');
+  } catch(e) {
+    toast('Connection failed: ' + e.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  PAGE NAVIGATION
+// ═══════════════════════════════════════════════
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = { families:'Families', payments:'Collect Fees', daily:'Daily Collections', reports:'Payment Report', settings:'Settings' };
+  document.getElementById('page-title').textContent = titles[name] || name;
+  const tb = document.getElementById('topbar-btn');
+  if (name === 'families') {
+    tb.innerHTML = `<button class="btn btn-primary" onclick="openAddFamilyModal()"><i class="fa-solid fa-user-plus"></i> Add Family</button>`;
+  } else if (name === 'reports') {
+    tb.innerHTML = `<button class="btn" onclick="syncAll()"><i class="fa-solid fa-rotate"></i> Sync</button>`;
+  } else {
+    tb.innerHTML = '';
+  }
+  if (name === 'daily') renderDaily();
+  if (name === 'reports') renderReports();
+  if (name === 'payments') { populateFamilySelect(); populateMonths(); }
+}
+
+// ═══════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════
+function openModal()  { document.getElementById('overlay').classList.add('show'); }
+function closeModal() { document.getElementById('overlay').classList.remove('show'); }
+function overlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+
+// ═══════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
