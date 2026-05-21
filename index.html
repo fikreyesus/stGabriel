@@ -679,7 +679,9 @@ function renderFamilies() {
   el.innerHTML = filtered.map(f => {
     const st  = getStatus(f.id);
     const kids = Array.isArray(f.children)
-      ? (f.children.length ? f.children.join(', ') : 'No children')
+      ? (f.children.length
+          ? f.children.map(c => typeof c === 'object' ? c.name : c).join(', ')
+          : 'No children')
       : (f.children || 'No children');
     return `<div class="family-card">
       <div class="avatar">${initials(f)}</div>
@@ -699,13 +701,32 @@ function renderFamilies() {
 // ═══════════════════════════════════════════════
 //  FAMILY MODAL
 // ═══════════════════════════════════════════════
+function formatBirthday(bday) {
+  if (!bday) return '';
+  const [m, d] = bday.split('-');
+  const mon = MONTH_NAMES_SHORT[parseInt(m, 10) - 1];
+  return mon ? ` · 🎂 ${mon} ${parseInt(d,10)}` : '';
+}
+
 function openFamilyModal(id) {
   const f  = families.find(x => +x.id === +id);
   const fp = payments.filter(p => +p.familyId === +id).sort((a,b) => b.id - a.id);
   const st = getStatus(id);
-  const kids = Array.isArray(f.children)
-    ? (f.children.length ? f.children.join(', ') : 'None listed')
-    : (f.children || 'None listed');
+
+  const childrenHtml = Array.isArray(f.children) && f.children.length
+    ? `<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        ${f.children.map(c => {
+          const name  = typeof c === 'object' ? c.name : c;
+          const bday  = typeof c === 'object' ? (c.birthday || '') : '';
+          return `<div style="display:flex;align-items:center;gap:8px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:6px 10px;font-size:13px">
+            <i class="fa-solid fa-child" style="color:var(--gray-400);font-size:13px"></i>
+            <span style="font-weight:500">${name}</span>
+            <span style="color:var(--gray-400);font-size:12px">${formatBirthday(bday)}</span>
+          </div>`;
+        }).join('')}
+      </div>`
+    : '<p style="font-size:13px;color:var(--gray-400);margin-top:6px">No children listed.</p>';
+
   document.getElementById('modal-body').innerHTML = `
     <div class="modal-title">
       Family Details
@@ -719,7 +740,8 @@ function openFamilyModal(id) {
       </div>
     </div>
     ${statusBadge(st)}
-    <div style="margin:12px 0;font-size:13px;color:var(--gray-600)"><strong>Children:</strong> ${kids}</div>
+    <div style="margin:14px 0 4px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-400)">Children</div>
+    ${childrenHtml}
     <div class="card-title" style="margin-top:18px">Payment History</div>
     ${fp.length ? fp.slice(0,6).map(p => `
       <div class="day-entry">
@@ -732,45 +754,133 @@ function openFamilyModal(id) {
           <button class="btn btn-sm btn-icon" onclick="showReceipt(payments.find(x=>+x.id===${p.id}))"><i class="fa-solid fa-receipt"></i></button>
         </div>
       </div>`).join('') : '<p style="font-size:13px;color:var(--gray-400)">No payments on record.</p>'}
-    <div style="display:flex;gap:8px;margin-top:18px">
+    <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap">
       <button class="btn btn-primary" style="flex:1" onclick="closeModal();showPage('payments',document.querySelectorAll('.nav-item')[1]);setTimeout(()=>preselectFamily(${id}),50)">
         <i class="fa-solid fa-money-bill-wave"></i> Collect Fee
       </button>
+      <button class="btn" onclick="closeModal();openAddFamilyModal(${id})"><i class="fa-solid fa-pen"></i> Edit</button>
       <button class="btn" onclick="closeModal()">Close</button>
     </div>`;
   openModal();
 }
 
-function openAddFamilyModal() {
+const MONTH_NAMES_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function openAddFamilyModal(editId = null) {
+  const existing = editId ? families.find(x => +x.id === +editId) : null;
+  const title    = existing ? 'Edit Family' : 'Add New Family';
+  const btnLabel = existing ? 'Save Changes' : 'Add Family';
+  const btnFn    = existing ? `saveEditFamily(${editId})` : 'addFamily()';
+
+  // Pre-fill children if editing
+  const existingChildren = existing && Array.isArray(existing.children) ? existing.children : [];
+
   document.getElementById('modal-body').innerHTML = `
     <div class="modal-title">
-      Add New Family
+      ${title}
       <span class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
     </div>
-    <div class="form-group"><label class="form-label">Husband's Full Name *</label><input id="nf-h" class="form-control" placeholder="e.g. Michael Haile"></div>
-    <div class="form-group"><label class="form-label">Wife's Full Name *</label><input id="nf-w" class="form-control" placeholder="e.g. Sara Haile"></div>
-    <div class="form-group"><label class="form-label">Address</label><input id="nf-a" class="form-control" placeholder="Street address, Louisville KY"></div>
-    <div class="form-group"><label class="form-label">Children (comma-separated)</label><input id="nf-c" class="form-control" placeholder="e.g. Daniel, Ruth, Liya"></div>
+    <div class="form-group"><label class="form-label">Husband's Full Name *</label><input id="nf-h" class="form-control" placeholder="e.g. Michael Haile" value="${existing?.husband||''}"></div>
+    <div class="form-group"><label class="form-label">Wife's Full Name *</label><input id="nf-w" class="form-control" placeholder="e.g. Sara Haile" value="${existing?.wife||''}"></div>
+    <div class="form-group"><label class="form-label">Address</label><input id="nf-a" class="form-control" placeholder="Street address, Louisville KY" value="${existing?.address||''}"></div>
+
+    <div class="form-group">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label class="form-label" style="margin:0">Children</label>
+        <button class="btn btn-sm" onclick="addChildRow()" type="button"><i class="fa-solid fa-plus"></i> Add Child</button>
+      </div>
+      <div id="children-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div id="no-children-msg" style="font-size:12px;color:var(--gray-400);padding:8px 0">No children added yet.</div>
+    </div>
+
     <div style="display:flex;gap:8px;margin-top:4px">
-      <button id="add-fam-btn" class="btn btn-primary" style="flex:1" onclick="addFamily()"><i class="fa-solid fa-user-plus"></i> Add Family</button>
+      <button id="add-fam-btn" class="btn btn-primary" style="flex:1" onclick="${btnFn}"><i class="fa-solid fa-user-plus"></i> ${btnLabel}</button>
       <button class="btn" onclick="closeModal()">Cancel</button>
     </div>`;
+
+  // Pre-populate existing children rows
+  existingChildren.forEach(c => {
+    const name  = typeof c === 'object' ? c.name  : c;
+    const bday  = typeof c === 'object' ? (c.birthday || '') : '';
+    addChildRow(name, bday);
+  });
+
   openModal();
+}
+
+function monthOptions(selected) {
+  return MONTH_NAMES_SHORT.map((m, i) =>
+    `<option value="${i+1}" ${selected == i+1 ? 'selected' : ''}>${m}</option>`
+  ).join('');
+}
+
+function dayOptions(selected) {
+  let opts = '<option value="">Day</option>';
+  for (let d = 1; d <= 31; d++) opts += `<option value="${d}" ${selected == d ? 'selected' : ''}>${d}</option>`;
+  return opts;
+}
+
+function addChildRow(name = '', birthday = '') {
+  const list  = document.getElementById('children-list');
+  const noMsg = document.getElementById('no-children-msg');
+  if (noMsg) noMsg.style.display = 'none';
+
+  // Parse birthday "MM-DD" or ""
+  const [bdMon, bdDay] = birthday ? birthday.split('-') : ['', ''];
+
+  const row = document.createElement('div');
+  row.className = 'child-row';
+  row.style.cssText = 'display:flex;align-items:center;gap:8px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:8px 10px;';
+  row.innerHTML = `
+    <i class="fa-solid fa-child" style="color:var(--gray-400);font-size:14px;flex-shrink:0"></i>
+    <input type="text" class="form-control child-name" placeholder="Child's name" value="${name}" style="flex:2;min-width:0">
+    <select class="form-control child-bmon" style="flex:1;min-width:0">
+      <option value="">Month</option>${monthOptions(bdMon)}
+    </select>
+    <select class="form-control child-bday" style="flex:0 0 70px">
+      ${dayOptions(bdDay)}
+    </select>
+    <button type="button" onclick="removeChildRow(this)" class="btn btn-sm btn-icon btn-danger" style="flex-shrink:0"><i class="fa-solid fa-xmark"></i></button>`;
+  list.appendChild(row);
+}
+
+function removeChildRow(btn) {
+  const row  = btn.closest('.child-row');
+  const list = document.getElementById('children-list');
+  row.remove();
+  if (!list.querySelector('.child-row')) {
+    const noMsg = document.getElementById('no-children-msg');
+    if (noMsg) noMsg.style.display = 'block';
+  }
+}
+
+function collectChildren() {
+  const rows = document.querySelectorAll('.child-row');
+  const children = [];
+  rows.forEach(row => {
+    const name = row.querySelector('.child-name').value.trim();
+    const mon  = row.querySelector('.child-bmon').value;
+    const day  = row.querySelector('.child-bday').value;
+    if (!name) return;
+    const birthday = (mon && day) ? `${mon.padStart(2,'0')}-${String(day).padStart(2,'0')}` : '';
+    children.push({ name, birthday });
+  });
+  return children;
 }
 
 async function addFamily() {
   const h = document.getElementById('nf-h').value.trim();
   const w = document.getElementById('nf-w').value.trim();
   const a = document.getElementById('nf-a').value.trim();
-  const c = document.getElementById('nf-c').value.trim();
   if (!h || !w) { toast('Please enter both names.', 'error'); return; }
+  const children = collectChildren();
   const btn = document.getElementById('add-fam-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Saving…';
   const newId = families.length ? Math.max(...families.map(f => +f.id)) + 1 : 1;
   const fam = {
     id: newId, husband: h, wife: w, address: a || '',
-    children: c ? c.split(',').map(x => x.trim()).filter(Boolean) : [],
+    children,
     createdAt: new Date().toISOString()
   };
   try {
@@ -785,6 +895,34 @@ async function addFamily() {
     toast('Error saving: ' + e.message, 'error');
     btn.disabled = false;
     btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Add Family';
+  }
+}
+
+async function saveEditFamily(id) {
+  const h = document.getElementById('nf-h').value.trim();
+  const w = document.getElementById('nf-w').value.trim();
+  const a = document.getElementById('nf-a').value.trim();
+  if (!h || !w) { toast('Please enter both names.', 'error'); return; }
+  const children = collectChildren();
+  const btn = document.getElementById('add-fam-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving…';
+  const idx = families.findIndex(f => +f.id === +id);
+  const updated = { ...families[idx], husband: h, wife: w, address: a || '', children };
+  const prev = families[idx];
+  families[idx] = updated;
+  try {
+    await gasRequest('updateFamily', { data: updated });
+    saveLocal();
+    closeModal();
+    renderFamilies();
+    populateFamilySelect();
+    toast('Family updated!', 'success');
+  } catch(e) {
+    families[idx] = prev;
+    toast('Error saving: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-pen"></i> Save Changes';
   }
 }
 
