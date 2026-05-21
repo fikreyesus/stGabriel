@@ -288,6 +288,35 @@
 <!-- ══════════════════════════════════════════════
      SETUP INSTRUCTIONS (shown until configured)
 ══════════════════════════════════════════════ -->
+<!-- ── PASSWORD SCREEN ── -->
+<div id="password-screen" style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:linear-gradient(160deg,#E6F1FB 0%,#F1EFE8 100%);">
+  <div style="background:#fff;border-radius:16px;border:1px solid #D3D1C7;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.1);text-align:center;">
+    <i class="fa-solid fa-church" style="font-size:44px;color:#0C447C;margin-bottom:16px;display:block"></i>
+    <h1 style="font-size:20px;font-weight:700;color:#2C2C2A;margin-bottom:4px">St Gabriel</h1>
+    <p style="font-size:13px;color:#888780;margin-bottom:28px">Ethiopian Orthodox Church</p>
+    <div style="text-align:left;margin-bottom:16px">
+      <label style="display:block;font-size:12px;font-weight:600;color:#5F5E5A;margin-bottom:6px">Password</label>
+      <div style="position:relative">
+        <input type="password" id="pw-input" placeholder="Enter password"
+          style="width:100%;padding:11px 40px 11px 13px;border:1.5px solid #D3D1C7;border-radius:8px;font-size:15px;color:#2C2C2A;outline:none;box-sizing:border-box"
+          onkeydown="if(event.key==='Enter')checkPassword()"
+          oninput="document.getElementById('pw-error').style.display='none'">
+        <i id="pw-eye" class="fa-solid fa-eye" onclick="togglePw()"
+          style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#888780;font-size:15px"></i>
+      </div>
+      <div id="pw-error" style="display:none;margin-top:8px;font-size:12px;color:#A32D2D;background:#FCEBEB;border:1px solid #F7C1C1;border-radius:6px;padding:7px 10px">
+        <i class="fa-solid fa-circle-exclamation"></i> Incorrect password. Please try again.
+      </div>
+    </div>
+    <button onclick="checkPassword()"
+      style="width:100%;padding:12px;background:#185FA5;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:background 0.15s"
+      onmouseover="this.style.background='#0C447C'" onmouseout="this.style.background='#185FA5'">
+      <i class="fa-solid fa-unlock"></i> Sign In
+    </button>
+    <p style="margin-top:20px;font-size:11px;color:#888780;font-style:italic">"I am the gate; whoever enters through me will be saved." — John 10:9</p>
+  </div>
+</div>
+
 <div id="setup-screen" style="display:none; max-width:700px; margin:60px auto; padding:0 20px;">
   <div style="text-align:center; margin-bottom:32px;">
     <i class="fa-solid fa-church" style="font-size:48px; color:var(--blue-mid);"></i>
@@ -505,26 +534,64 @@
 // ═══════════════════════════════════════════════
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-let GAS_URL  = localStorage.getItem('sg_gas_url') || '';
+let GAS_URL  = 'https://script.google.com/macros/s/AKfycbyrlWmjR35KjfsCZoY9zYcRv82dZJw4N82UK1TVGz25wouP6ksnU3JIdByoDPTmiA/exec';
 let families = JSON.parse(localStorage.getItem('sg_families') || '[]');
 let payments = JSON.parse(localStorage.getItem('sg_payments') || '[]');
 
 // ═══════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════
-function init() {
-  if (!GAS_URL) {
-    document.getElementById('setup-screen').style.display = 'block';
+// ═══════════════════════════════════════════════
+//  PASSWORD
+// ═══════════════════════════════════════════════
+const CORRECT_PW = 'StGabriel19';
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  if (val === CORRECT_PW) {
+    document.getElementById('password-screen').style.display = 'none';
+    sessionStorage.setItem('sg_auth', '1');
+    initApp();
   } else {
-    document.getElementById('app').style.display = 'flex';
-    document.getElementById('settings-url').value = GAS_URL;
-    renderFamilies();
-    renderReports();
-    renderDaily();
-    populateFamilySelect();
-    populateMonths();
-    syncAll();
+    document.getElementById('pw-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
   }
+}
+
+function togglePw() {
+  const input = document.getElementById('pw-input');
+  const eye   = document.getElementById('pw-eye');
+  if (input.type === 'password') {
+    input.type = 'text';
+    eye.className = 'fa-solid fa-eye-slash';
+  } else {
+    input.type = 'password';
+    eye.className = 'fa-solid fa-eye';
+  }
+}
+
+function init() {
+  if (sessionStorage.getItem('sg_auth') === '1') {
+    document.getElementById('password-screen').style.display = 'none';
+    initApp();
+  } else {
+    document.getElementById('password-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    setTimeout(() => document.getElementById('pw-input').focus(), 100);
+  }
+}
+
+function initApp() {
+  document.getElementById('app').style.display = 'flex';
+  const sUrl = document.getElementById('settings-url');
+  if (sUrl) sUrl.value = GAS_URL;
+  renderFamilies();
+  renderReports();
+  renderDaily();
+  populateFamilySelect();
+  populateMonths();
+  syncAll();
 }
 
 function saveSetup() {
