@@ -6,290 +6,121 @@
 <title>St Gabriel Ethiopian Orthodox Church — Management</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <style>
-  /* ── Reset & Base ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --blue-dark:   #042C53;
-    --blue-mid:    #0C447C;
-    --blue:        #185FA5;
-    --blue-light:  #85B7EB;
-    --blue-pale:   #E6F1FB;
-    --green-dark:  #27500A;
-    --green-mid:   #3B6D11;
-    --green:       #639922;
-    --green-pale:  #EAF3DE;
-    --amber-pale:  #FAEEDA;
-    --amber:       #854F0B;
-    --red-pale:    #FCEBEB;
-    --red:         #A32D2D;
-    --gray-50:     #F8F8F7;
-    --gray-100:    #F1EFE8;
-    --gray-200:    #D3D1C7;
-    --gray-400:    #888780;
-    --gray-600:    #5F5E5A;
-    --gray-900:    #2C2C2A;
-    --radius-sm:   6px;
-    --radius-md:   8px;
-    --radius-lg:   12px;
-    --radius-xl:   16px;
+    --blue-dark:#042C53;--blue-mid:#0C447C;--blue:#185FA5;--blue-light:#85B7EB;--blue-pale:#E6F1FB;
+    --green-dark:#27500A;--green-mid:#3B6D11;--green:#639922;--green-pale:#EAF3DE;
+    --amber-pale:#FAEEDA;--amber:#854F0B;--red-pale:#FCEBEB;--red:#A32D2D;
+    --gray-50:#F8F8F7;--gray-100:#F1EFE8;--gray-200:#D3D1C7;--gray-400:#888780;
+    --gray-600:#5F5E5A;--gray-900:#2C2C2A;
+    --radius-sm:6px;--radius-md:8px;--radius-lg:12px;--radius-xl:16px;
   }
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: var(--gray-100);
-    color: var(--gray-900);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  /* ── Layout ── */
-  .app { display: flex; height: 100vh; overflow: hidden; }
-
-  /* ── Sidebar ── */
-  .sidebar {
-    width: 240px; flex-shrink: 0;
-    background: var(--blue-mid);
-    display: flex; flex-direction: column;
-    overflow-y: auto;
-  }
-  .sidebar-brand {
-    padding: 24px 18px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    display: flex; align-items: center; gap: 12px;
-  }
-  .sidebar-brand .icon {
-    width: 42px; height: 42px; border-radius: var(--radius-md);
-    background: rgba(255,255,255,0.12);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; color: var(--blue-light);
-  }
-  .sidebar-brand .name { font-size: 16px; font-weight: 600; color: #fff; }
-  .sidebar-brand .sub  { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 1px; }
-  .nav { padding: 12px 10px; flex: 1; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 12px; border-radius: var(--radius-md);
-    color: rgba(255,255,255,0.6); font-size: 13.5px;
-    cursor: pointer; margin-bottom: 2px;
-    border: none; background: none; width: 100%; text-align: left;
-    transition: background 0.15s, color 0.15s;
-  }
-  .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
-  .nav-item.active { background: rgba(255,255,255,0.14); color: #fff; }
-  .nav-item i { width: 18px; text-align: center; font-size: 15px; }
-  .sidebar-footer {
-    padding: 14px 18px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    font-size: 11px; color: rgba(255,255,255,0.35); line-height: 1.6;
-  }
-
-  /* ── Main ── */
-  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-  .topbar {
-    background: #fff; border-bottom: 1px solid var(--gray-200);
-    padding: 14px 28px; display: flex; align-items: center; justify-content: space-between;
-    flex-shrink: 0;
-  }
-  .topbar h1 { font-size: 20px; font-weight: 600; color: var(--gray-900); }
-  .topbar-actions { display: flex; gap: 8px; align-items: center; }
-  .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
-
-  /* ── Pages ── */
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* ── Cards ── */
-  .card {
-    background: #fff; border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg); padding: 18px 20px;
-    margin-bottom: 14px;
-  }
-  .card-title {
-    font-size: 11px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.06em; color: var(--gray-400); margin-bottom: 14px;
-  }
-
-  /* ── Metrics ── */
-  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .metric {
-    background: #fff; border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg); padding: 14px 16px;
-  }
-  .metric-label { font-size: 12px; color: var(--gray-400); margin-bottom: 6px; }
-  .metric-value { font-size: 26px; font-weight: 600; color: var(--gray-900); }
-  .metric-value.green { color: var(--green-mid); }
-
-  /* ── Buttons ── */
-  .btn {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 8px 16px; border-radius: var(--radius-md);
-    font-size: 13px; font-weight: 500; cursor: pointer;
-    border: 1px solid var(--gray-200); background: #fff;
-    color: var(--gray-900); transition: background 0.15s, border-color 0.15s;
-    white-space: nowrap;
-  }
-  .btn:hover { background: var(--gray-50); border-color: var(--gray-400); }
-  .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
-  .btn-primary:hover { background: var(--blue-mid); border-color: var(--blue-mid); }
-  .btn-success { background: var(--green-mid); color: #fff; border-color: var(--green-mid); }
-  .btn-success:hover { background: var(--green-dark); border-color: var(--green-dark); }
-  .btn-danger { background: #fff; color: var(--red); border-color: #F7C1C1; }
-  .btn-danger:hover { background: var(--red-pale); }
-  .btn-sm { padding: 5px 10px; font-size: 12px; }
-  .btn-icon { padding: 6px 8px; }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  /* ── Badges ── */
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 9px; border-radius: 999px;
-    font-size: 11px; font-weight: 600;
-  }
-  .badge-green { background: var(--green-pale); color: var(--green-mid); }
-  .badge-amber { background: var(--amber-pale); color: var(--amber); }
-  .badge-red   { background: var(--red-pale);   color: var(--red);   }
-  .badge-gray  { background: var(--gray-100);   color: var(--gray-600); }
-  .badge-blue  { background: var(--blue-pale);  color: var(--blue-mid); }
-
-  /* ── Forms ── */
-  .form-group { margin-bottom: 14px; }
-  .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--gray-600); margin-bottom: 5px; }
-  .form-control {
-    width: 100%; padding: 8px 11px;
-    border: 1px solid var(--gray-200); border-radius: var(--radius-md);
-    font-size: 13px; color: var(--gray-900); background: #fff;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .form-control:focus { outline: none; border-color: var(--blue-light); box-shadow: 0 0 0 3px rgba(24,95,165,0.1); }
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  /* ── Table ── */
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead th { text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400); padding: 8px 12px; border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
-  tbody td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-900); }
-  tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover td { background: var(--gray-50); }
-
-  /* ── Family Cards ── */
-  .family-card {
-    background: #fff; border: 1px solid var(--gray-200);
-    border-radius: var(--radius-lg); padding: 14px 16px;
-    display: flex; align-items: center; gap: 14px; margin-bottom: 10px;
-    transition: box-shadow 0.15s;
-  }
-  .family-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-  .avatar {
-    width: 42px; height: 42px; border-radius: 50%;
-    background: var(--blue-pale); color: var(--blue-mid);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 600; flex-shrink: 0;
-  }
-  .family-info { flex: 1; min-width: 0; }
-  .family-name { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .family-meta { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
-  .family-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
-  /* ── Search ── */
-  .search-wrap { position: relative; margin-bottom: 16px; }
-  .search-wrap i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
-  .search-wrap input { padding-left: 34px; }
-
-  /* ── Payment Summary ── */
-  .pay-summary {
-    background: var(--blue-pale); border: 1px solid #B5D4F4;
-    border-radius: var(--radius-md); padding: 10px 14px;
-    font-size: 13px; margin-bottom: 14px; display: none;
-  }
-  .pay-summary strong { color: var(--blue-mid); }
-
-  /* ── Day entries ── */
-  .day-entry {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 0; border-bottom: 1px solid var(--gray-100);
-  }
-  .day-entry:last-child { border-bottom: none; }
-
-  /* ── Modal / Overlay ── */
-  .overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5); z-index: 1000;
-    align-items: center; justify-content: center;
-    padding: 20px;
-  }
-  .overlay.show { display: flex; }
-  .modal {
-    background: #fff; border-radius: var(--radius-xl);
-    padding: 24px; width: 100%; max-width: 440px;
-    max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-  }
-  .modal-title {
-    font-size: 16px; font-weight: 600; margin-bottom: 18px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .modal-close { cursor: pointer; color: var(--gray-400); font-size: 18px; line-height: 1; }
-  .modal-close:hover { color: var(--gray-900); }
-
-  /* ── Receipt ── */
-  .receipt {
-    font-family: 'Courier New', monospace; font-size: 12px;
-    border: 2px solid var(--blue-mid); border-radius: var(--radius-md);
-    padding: 18px; line-height: 1.8; background: var(--gray-50);
-  }
-  .receipt-center { text-align: center; }
-  .receipt-divider { border-top: 1px dashed var(--gray-200); margin: 10px 0; }
-  .receipt-row { display: flex; justify-content: space-between; }
-  .receipt-total { text-align: center; padding: 8px 0; }
-  .receipt-amount { font-size: 28px; font-weight: 700; color: var(--green-mid); }
-
-  /* ── Toast ── */
-  #toast {
-    position: fixed; bottom: 24px; right: 24px;
-    padding: 11px 18px; border-radius: var(--radius-md);
-    font-size: 13px; font-weight: 500; z-index: 9999;
-    opacity: 0; transform: translateY(8px);
-    transition: opacity 0.25s, transform 0.25s;
-    pointer-events: none;
-  }
-  #toast.show { opacity: 1; transform: translateY(0); }
-  #toast.success { background: var(--green-mid); color: #fff; }
-  #toast.error   { background: var(--red);        color: #fff; }
-  #toast.info    { background: var(--blue);        color: #fff; }
-
-  /* ── Spinner ── */
-  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Setup Banner ── */
-  .setup-banner {
-    background: var(--amber-pale); border: 1px solid #FAC775;
-    border-radius: var(--radius-lg); padding: 14px 18px;
-    margin-bottom: 18px; font-size: 13px;
-  }
-  .setup-banner strong { color: var(--amber); }
-  .setup-banner a { color: var(--blue); }
-
-  /* ── Empty State ── */
-  .empty { text-align: center; padding: 48px 20px; color: var(--gray-400); }
-  .empty i { font-size: 36px; display: block; margin-bottom: 10px; }
-  .empty p { font-size: 14px; }
-
-  /* ── Sync status ── */
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-  .sync-dot.green { background: var(--green); }
-  .sync-dot.red   { background: var(--red); }
-  .sync-dot.gray  { background: var(--gray-400); }
-  #sync-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-400); }
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--gray-100);color:var(--gray-900);min-height:100vh;font-size:14px;line-height:1.5;}
+  .app{display:flex;height:100vh;overflow:hidden;}
+  .sidebar{width:240px;flex-shrink:0;background:var(--blue-mid);display:flex;flex-direction:column;overflow-y:auto;}
+  .sidebar-brand{padding:24px 18px 20px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px;}
+  .sidebar-brand .icon{width:42px;height:42px;border-radius:var(--radius-md);background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--blue-light);}
+  .sidebar-brand .name{font-size:16px;font-weight:600;color:#fff;}
+  .sidebar-brand .sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:1px;}
+  .nav{padding:12px 10px;flex:1;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-md);color:rgba(255,255,255,0.6);font-size:13.5px;cursor:pointer;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;transition:background 0.15s,color 0.15s;}
+  .nav-item:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9);}
+  .nav-item.active{background:rgba(255,255,255,0.14);color:#fff;}
+  .nav-item i{width:18px;text-align:center;font-size:15px;}
+  .sidebar-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,0.1);font-size:11px;color:rgba(255,255,255,0.35);line-height:1.6;}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .topbar{background:#fff;border-bottom:1px solid var(--gray-200);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .topbar h1{font-size:20px;font-weight:600;color:var(--gray-900);}
+  .topbar-actions{display:flex;gap:8px;align-items:center;}
+  .content{flex:1;overflow-y:auto;padding:24px 28px;}
+  .page{display:none;}.page.active{display:block;}
+  .card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:14px;}
+  .card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--gray-400);margin-bottom:14px;}
+  .metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px;}
+  .metric{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:14px 16px;}
+  .metric-label{font-size:12px;color:var(--gray-400);margin-bottom:6px;}
+  .metric-value{font-size:26px;font-weight:600;color:var(--gray-900);}
+  .metric-value.green{color:var(--green-mid);}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--radius-md);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--gray-200);background:#fff;color:var(--gray-900);transition:background 0.15s,border-color 0.15s;white-space:nowrap;}
+  .btn:hover{background:var(--gray-50);border-color:var(--gray-400);}
+  .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+  .btn-primary:hover{background:var(--blue-mid);border-color:var(--blue-mid);}
+  .btn-success{background:var(--green-mid);color:#fff;border-color:var(--green-mid);}
+  .btn-success:hover{background:var(--green-dark);border-color:var(--green-dark);}
+  .btn-danger{background:#fff;color:var(--red);border-color:#F7C1C1;}
+  .btn-danger:hover{background:var(--red-pale);}
+  .btn-sm{padding:5px 10px;font-size:12px;}.btn-icon{padding:6px 8px;}.btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;}
+  .badge-green{background:var(--green-pale);color:var(--green-mid);}
+  .badge-amber{background:var(--amber-pale);color:var(--amber);}
+  .badge-red{background:var(--red-pale);color:var(--red);}
+  .badge-gray{background:var(--gray-100);color:var(--gray-600);}
+  .badge-blue{background:var(--blue-pale);color:var(--blue-mid);}
+  .badge-purple{background:#F3EEFF;color:#6B21A8;}
+  .form-group{margin-bottom:14px;}
+  .form-label{display:block;font-size:12px;font-weight:500;color:var(--gray-600);margin-bottom:5px;}
+  .form-control{width:100%;padding:8px 11px;border:1px solid var(--gray-200);border-radius:var(--radius-md);font-size:13px;color:var(--gray-900);background:#fff;transition:border-color 0.15s,box-shadow 0.15s;}
+  .form-control:focus{outline:none;border-color:var(--blue-light);box-shadow:0 0 0 3px rgba(24,95,165,0.1);}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-400);padding:8px 12px;border-bottom:1px solid var(--gray-200);white-space:nowrap;}
+  tbody td{padding:10px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-900);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover td{background:var(--gray-50);}
+  .family-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;transition:box-shadow 0.15s;}
+  .family-card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.07);}
+  .avatar{width:42px;height:42px;border-radius:50%;background:var(--blue-pale);color:var(--blue-mid);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0;}
+  .avatar.single-avatar{background:#F3EEFF;color:#6B21A8;}
+  .family-info{flex:1;min-width:0;}
+  .family-name{font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .family-meta{font-size:12px;color:var(--gray-400);margin-top:2px;}
+  .family-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .search-wrap{position:relative;margin-bottom:16px;}
+  .search-wrap i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:14px;}
+  .search-wrap input{padding-left:34px;}
+  .pay-summary{background:var(--blue-pale);border:1px solid #B5D4F4;border-radius:var(--radius-md);padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;}
+  .pay-summary strong{color:var(--blue-mid);}
+  .day-entry{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-100);}
+  .day-entry:last-child{border-bottom:none;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px;}
+  .overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:var(--radius-xl);padding:24px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+  .modal-title{font-size:16px;font-weight:600;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
+  .modal-close{cursor:pointer;color:var(--gray-400);font-size:18px;line-height:1;}
+  .modal-close:hover{color:var(--gray-900);}
+  .receipt{font-family:'Courier New',monospace;font-size:12px;border:2px solid var(--blue-mid);border-radius:var(--radius-md);padding:18px;line-height:1.8;background:var(--gray-50);}
+  .receipt-center{text-align:center;}
+  .receipt-divider{border-top:1px dashed var(--gray-200);margin:10px 0;}
+  .receipt-row{display:flex;justify-content:space-between;}
+  .receipt-total{text-align:center;padding:8px 0;}
+  .receipt-amount{font-size:28px;font-weight:700;color:var(--green-mid);}
+  #toast{position:fixed;bottom:24px;right:24px;padding:11px 18px;border-radius:var(--radius-md);font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateY(8px);transition:opacity 0.25s,transform 0.25s;pointer-events:none;}
+  #toast.show{opacity:1;transform:translateY(0);}
+  #toast.success{background:var(--green-mid);color:#fff;}
+  #toast.error{background:var(--red);color:#fff;}
+  #toast.info{background:var(--blue);color:#fff;}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .empty{text-align:center;padding:48px 20px;color:var(--gray-400);}
+  .empty i{font-size:36px;display:block;margin-bottom:10px;}
+  .empty p{font-size:14px;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .sync-dot.green{background:var(--green);}
+  .sync-dot.red{background:var(--red);}
+  .sync-dot.gray{background:var(--gray-400);}
+  #sync-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-400);}
+  /* Member type toggle */
+  .member-type-toggle{display:flex;gap:0;border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden;margin-bottom:16px;}
+  .member-type-btn{flex:1;padding:9px 12px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:#fff;color:var(--gray-600);transition:background 0.15s,color 0.15s;}
+  .member-type-btn.active{background:var(--blue);color:#fff;}
+  .member-type-btn:not(.active):hover{background:var(--gray-50);}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
-     SETUP INSTRUCTIONS (shown until configured)
-══════════════════════════════════════════════ -->
-<!-- ── PASSWORD SCREEN ── -->
-<div id="password-screen" style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:linear-gradient(160deg,#E6F1FB 0%,#F1EFE8 100%);">
+<!-- PASSWORD SCREEN -->
+<div id="password-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(160deg,#E6F1FB 0%,#F1EFE8 100%);">
   <div style="background:#fff;border-radius:16px;border:1px solid #D3D1C7;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.1);text-align:center;">
     <i class="fa-solid fa-church" style="font-size:44px;color:#0C447C;margin-bottom:16px;display:block"></i>
     <h1 style="font-size:20px;font-weight:700;color:#2C2C2A;margin-bottom:4px">St Gabriel</h1>
@@ -317,40 +148,8 @@
   </div>
 </div>
 
-<div id="setup-screen" style="display:none; max-width:700px; margin:60px auto; padding:0 20px;">
-  <div style="text-align:center; margin-bottom:32px;">
-    <i class="fa-solid fa-church" style="font-size:48px; color:var(--blue-mid);"></i>
-    <h1 style="font-size:26px; font-weight:700; margin-top:12px; color:var(--gray-900);">St Gabriel Church Management</h1>
-    <p style="color:var(--gray-600); margin-top:6px;">One-time setup required — connect your Google Sheet</p>
-  </div>
-  <div class="card">
-    <div class="card-title">Google Sheets Backend Setup</div>
-    <ol style="line-height:2.2; color:var(--gray-600); font-size:13px; padding-left:18px; margin-bottom:20px;">
-      <li>Open <a href="https://sheets.google.com" target="_blank" style="color:var(--blue);">Google Sheets</a> and create a new spreadsheet named <strong>St Gabriel Church DB</strong>.</li>
-      <li>Create three sheets (tabs): <strong>Families</strong>, <strong>Payments</strong>, <strong>Config</strong>.</li>
-      <li>In the <strong>Families</strong> tab, add headers in row 1:<br><code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px;">id | husband | wife | address | children | createdAt</code></li>
-      <li>In the <strong>Payments</strong> tab, add headers in row 1:<br><code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px;">id | familyId | date | type | periodFrom | periodTo | amount | method | timestamp</code></li>
-      <li>In your spreadsheet, click <strong>Extensions → Apps Script</strong>.</li>
-      <li>Delete any existing code and paste the <strong>Apps Script code</strong> from the <code>google_apps_script.js</code> file.</li>
-      <li>Click <strong>Deploy → New deployment</strong>, choose <strong>Web app</strong>, set "Who has access" to <strong>Anyone</strong>, click Deploy.</li>
-      <li>Copy the <strong>Web App URL</strong> and paste it below.</li>
-    </ol>
-    <div class="form-group">
-      <label class="form-label">Google Apps Script Web App URL</label>
-      <input type="text" id="setup-url" class="form-control" placeholder="https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec">
-    </div>
-    <button class="btn btn-primary" onclick="saveSetup()" style="width:100%"><i class="fa-solid fa-check"></i> Save & Launch App</button>
-  </div>
-  <p style="text-align:center; margin-top:16px; font-size:12px; color:var(--gray-400);">
-    Data is stored in your private Google Sheet. This app runs entirely in your browser.
-  </p>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     MAIN APP
-══════════════════════════════════════════════ -->
+<!-- MAIN APP -->
 <div id="app" class="app" style="display:none;">
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="icon"><i class="fa-solid fa-church"></i></div>
@@ -360,40 +159,26 @@
       </div>
     </div>
     <nav class="nav">
-      <button class="nav-item active" onclick="showPage('families',this)">
-        <i class="fa-solid fa-users"></i> Families
-      </button>
-      <button class="nav-item" onclick="showPage('payments',this)">
-        <i class="fa-solid fa-money-bill-wave"></i> Collect Fees
-      </button>
-      <button class="nav-item" onclick="showPage('daily',this)">
-        <i class="fa-solid fa-calendar-day"></i> Daily Collections
-      </button>
-      <button class="nav-item" onclick="showPage('reports',this)">
-        <i class="fa-solid fa-chart-bar"></i> Payment Report
-      </button>
-      <button class="nav-item" onclick="showPage('settings',this)" style="margin-top:auto;">
-        <i class="fa-solid fa-gear"></i> Settings
-      </button>
+      <button class="nav-item active" onclick="showPage('families',this)"><i class="fa-solid fa-users"></i> Members</button>
+      <button class="nav-item" onclick="showPage('payments',this)"><i class="fa-solid fa-money-bill-wave"></i> Collect Fees</button>
+      <button class="nav-item" onclick="showPage('daily',this)"><i class="fa-solid fa-calendar-day"></i> Daily Collections</button>
+      <button class="nav-item" onclick="showPage('reports',this)"><i class="fa-solid fa-chart-bar"></i> Payment Report</button>
+      <button class="nav-item" onclick="showPage('settings',this)"><i class="fa-solid fa-gear"></i> Settings</button>
     </nav>
-    <div class="sidebar-footer">
-      2216 Goldsmith Lane<br>Louisville, KY 40218
-    </div>
+    <div class="sidebar-footer">2216 Goldsmith Lane<br>Louisville, KY 40218</div>
   </aside>
 
-  <!-- Main content -->
   <div class="main">
     <div class="topbar">
-      <h1 id="page-title">Families</h1>
+      <h1 id="page-title">Members</h1>
       <div class="topbar-actions">
         <div id="sync-status"><span class="sync-dot gray" id="sync-dot"></span><span id="sync-text">Not synced</span></div>
         <div id="topbar-btn"></div>
       </div>
     </div>
-
     <div class="content">
 
-      <!-- ── FAMILIES ── -->
+      <!-- FAMILIES / MEMBERS -->
       <div id="page-families" class="page active">
         <div class="search-wrap">
           <i class="fa-solid fa-magnifying-glass"></i>
@@ -402,59 +187,43 @@
         <div id="families-list"></div>
       </div>
 
-      <!-- ── PAYMENTS ── -->
+      <!-- PAYMENTS -->
       <div id="page-payments" class="page">
         <div class="card">
           <div class="card-title">Record a Payment</div>
           <div class="form-group">
-            <label class="form-label">Family</label>
+            <label class="form-label">Member / Family</label>
             <select id="pay-family" class="form-control" onchange="updatePaySummary()">
-              <option value="">— Select a family —</option>
+              <option value="">— Select a member or family —</option>
             </select>
           </div>
           <div class="form-group">
             <label class="form-label">Payment Type</label>
             <select id="pay-type" class="form-control" onchange="onTypeChange()">
               <option value="">— Select type —</option>
-              <option>Membership</option>
-              <option>Tithes</option>
-              <option>Christening</option>
-              <option>Gift</option>
-              <option>Seelet</option>
-              <option>Prayer Request</option>
-              <option>Other</option>
+              <option>Membership</option><option>Tithes</option><option>Christening</option>
+              <option>Gift</option><option>Seelet</option><option>Prayer Request</option><option>Other</option>
             </select>
           </div>
           <div id="month-range-section">
             <div class="grid-2">
-              <div class="form-group">
-                <label class="form-label">From Month</label>
-                <select id="pay-from" class="form-control" onchange="updatePaySummary()"></select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">To Month</label>
-                <select id="pay-to" class="form-control" onchange="updatePaySummary()"></select>
-              </div>
+              <div class="form-group"><label class="form-label">From Month</label><select id="pay-from" class="form-control" onchange="updatePaySummary()"></select></div>
+              <div class="form-group"><label class="form-label">To Month</label><select id="pay-to" class="form-control" onchange="updatePaySummary()"></select></div>
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Amount ($)</label>
-            <input type="number" id="pay-amount" class="form-control" placeholder="0.00" min="0" step="0.01" oninput="updatePaySummary()">
-          </div>
+          <div class="form-group"><label class="form-label">Amount ($)</label><input type="number" id="pay-amount" class="form-control" placeholder="0.00" min="0" step="0.01" oninput="updatePaySummary()"></div>
           <div class="form-group">
             <label class="form-label">Payment Method</label>
-            <select id="pay-method" class="form-control">
-              <option>Cash</option><option>Check</option><option>Zelle</option><option>PayPal</option><option>Other</option>
-            </select>
+            <select id="pay-method" class="form-control"><option>Cash</option><option>Check</option><option>Zelle</option><option>PayPal</option><option>Other</option></select>
           </div>
           <div id="pay-summary" class="pay-summary"></div>
-          <button id="pay-btn" class="btn btn-success" onclick="processPayment()" style="width:100%; justify-content:center; padding:11px;">
+          <button id="pay-btn" class="btn btn-success" onclick="processPayment()" style="width:100%;justify-content:center;padding:11px;">
             <i class="fa-solid fa-receipt"></i> Record Payment &amp; Print Receipt
           </button>
         </div>
       </div>
 
-      <!-- ── DAILY ── -->
+      <!-- DAILY -->
       <div id="page-daily" class="page">
         <div class="metrics-grid">
           <div class="metric"><div class="metric-label">Today's Total</div><div class="metric-value green" id="daily-total">$0.00</div></div>
@@ -466,12 +235,12 @@
         </div>
       </div>
 
-      <!-- ── REPORTS ── -->
+      <!-- REPORTS -->
       <div id="page-reports" class="page">
         <div class="metrics-grid">
           <div class="metric"><div class="metric-label">Total Collected</div><div class="metric-value green" id="rpt-total">$0.00</div></div>
-          <div class="metric"><div class="metric-label">Families Paid This Month</div><div class="metric-value" id="rpt-month">0</div></div>
-          <div class="metric"><div class="metric-label">Total Families</div><div class="metric-value" id="rpt-families">0</div></div>
+          <div class="metric"><div class="metric-label">Paid This Month</div><div class="metric-value" id="rpt-month">0</div></div>
+          <div class="metric"><div class="metric-label">Total Members</div><div class="metric-value" id="rpt-families">0</div></div>
           <div class="metric"><div class="metric-label">Total Payments</div><div class="metric-value" id="rpt-payments">0</div></div>
         </div>
         <div class="card">
@@ -483,23 +252,69 @@
         </div>
       </div>
 
-      <!-- ── SETTINGS ── -->
+      <!-- SETTINGS -->
       <div id="page-settings" class="page">
         <div class="card">
           <div class="card-title">Google Sheets Connection</div>
+
+          <!-- Status indicator -->
+          <div id="conn-status-box" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;background:var(--gray-100);border:1px solid var(--gray-200);margin-bottom:14px;font-size:13px">
+            <span class="sync-dot gray" id="conn-dot" style="width:10px;height:10px;flex-shrink:0"></span>
+            <span id="conn-status-text" style="color:var(--gray-600)">Not tested yet — enter your URL and click Test Connection</span>
+          </div>
+
           <div class="form-group">
             <label class="form-label">Apps Script Web App URL</label>
-            <input type="text" id="settings-url" class="form-control" placeholder="https://script.google.com/macros/s/…/exec">
+            <input type="text" id="settings-url" class="form-control"
+              placeholder="https://script.google.com/macros/s/…/exec"
+              oninput="resetConnStatus()">
+            <div style="font-size:11px;color:var(--gray-400);margin-top:5px">
+              Must end in <code style="background:var(--gray-100);padding:1px 5px;border-radius:3px">/exec</code> — get this from Apps Script → Deploy → Manage deployments
+            </div>
           </div>
-          <div style="display:flex;gap:8px">
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-primary" onclick="saveSettings()"><i class="fa-solid fa-save"></i> Save URL</button>
-            <button class="btn" onclick="testConnection()"><i class="fa-solid fa-plug"></i> Test Connection</button>
-            <button class="btn" onclick="syncAll()"><i class="fa-solid fa-rotate"></i> Force Sync</button>
+            <button class="btn" id="test-btn" onclick="testConnectionFull()"><i class="fa-solid fa-plug"></i> Test Connection</button>
+            <button class="btn" onclick="syncAll()"><i class="fa-solid fa-rotate"></i> Force Sync Now</button>
+          </div>
+        </div>
+
+        <!-- Setup guide -->
+        <div class="card">
+          <div class="card-title">How to set up Google Sheets sync</div>
+          <div style="font-size:13px;color:var(--gray-600);line-height:2">
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
+              <span style="background:var(--blue);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">1</span>
+              <span>Open <a href="https://sheets.google.com" target="_blank" style="color:var(--blue)">Google Sheets</a>, create a new spreadsheet. Add three tabs named exactly: <strong>Families</strong>, <strong>Payments</strong>, <strong>Config</strong></span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
+              <span style="background:var(--blue);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">2</span>
+              <span>Click <strong>Extensions → Apps Script</strong>. Delete any existing code. Paste the full code from the <code style="background:var(--gray-100);padding:1px 5px;border-radius:3px">google_apps_script.js</code> file.</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
+              <span style="background:var(--blue);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">3</span>
+              <span>Click <strong>Deploy → New deployment</strong> → Type: <strong>Web app</strong> → Execute as: <strong>Me</strong> → Who has access: <strong>Anyone</strong> → Deploy</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
+              <span style="background:var(--blue);color:#fff;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px">4</span>
+              <span>Copy the <strong>Web App URL</strong> (ends in <code style="background:var(--gray-100);padding:1px 5px;border-radius:3px">/exec</code>), paste it above, click <strong>Save URL</strong> then <strong>Test Connection</strong></span>
+            </div>
+          </div>
+
+          <!-- Common errors -->
+          <div style="margin-top:10px;padding:10px 14px;background:var(--amber-pale);border:1px solid #FAC775;border-radius:8px;font-size:12px;color:var(--amber);line-height:1.9">
+            <strong>Common reasons sync fails:</strong><br>
+            • URL is wrong or expired — re-deploy and copy a fresh URL<br>
+            • Access is set to "Only me" — must be set to <strong>Anyone</strong><br>
+            • Script was saved but never deployed — you must click Deploy<br>
+            • Sheet tabs are named wrong — must be <strong>Families</strong> and <strong>Payments</strong> exactly<br>
+            • Apps Script needs authorization — click Review Permissions when prompted
           </div>
         </div>
         <div class="card">
           <div class="card-title">Local Cache</div>
-          <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">Families and payments are cached locally for offline use. Click sync to refresh from Google Sheets.</p>
+          <p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">Members and payments are cached locally for offline use.</p>
           <div style="display:flex;gap:8px">
             <button class="btn" onclick="syncAll()"><i class="fa-solid fa-cloud-arrow-down"></i> Pull from Sheets</button>
             <button class="btn btn-danger" onclick="clearCache()"><i class="fa-solid fa-trash"></i> Clear Local Cache</button>
@@ -509,23 +324,21 @@
           <div class="card-title">About</div>
           <p style="font-size:13px;color:var(--gray-600);line-height:1.8">
             <strong>St Gabriel Ethiopian Orthodox Church</strong><br>
-            Management System v2.0<br>
+            Management System v2.1 — Single Member Support<br>
             Data stored in Google Sheets · Runs fully in your browser<br>
             No third-party servers · Privacy-first
           </p>
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /app -->
+    </div>
+  </div>
+</div>
 
-<!-- Overlay / Modal -->
+<!-- Modal Overlay -->
 <div class="overlay" id="overlay" onclick="overlayClick(event)">
   <div class="modal" id="modal-body"></div>
 </div>
-
-<!-- Toast -->
 <div id="toast"></div>
 
 <script>
@@ -533,14 +346,12 @@
 //  CONFIG & STATE
 // ═══════════════════════════════════════════════
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_NAMES_SHORT = MONTHS;
 
 let GAS_URL  = 'https://script.google.com/macros/s/AKfycbyrlWmjR35KjfsCZoY9zYcRv82dZJw4N82UK1TVGz25wouP6ksnU3JIdByoDPTmiA/exec';
 let families = JSON.parse(localStorage.getItem('sg_families') || '[]');
 let payments = JSON.parse(localStorage.getItem('sg_payments') || '[]');
 
-// ═══════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════
 // ═══════════════════════════════════════════════
 //  PASSWORD
 // ═══════════════════════════════════════════════
@@ -562,13 +373,8 @@ function checkPassword() {
 function togglePw() {
   const input = document.getElementById('pw-input');
   const eye   = document.getElementById('pw-eye');
-  if (input.type === 'password') {
-    input.type = 'text';
-    eye.className = 'fa-solid fa-eye-slash';
-  } else {
-    input.type = 'password';
-    eye.className = 'fa-solid fa-eye';
-  }
+  if (input.type === 'password') { input.type = 'text'; eye.className = 'fa-solid fa-eye-slash'; }
+  else { input.type = 'password'; eye.className = 'fa-solid fa-eye'; }
 }
 
 function init() {
@@ -586,29 +392,22 @@ function initApp() {
   document.getElementById('app').style.display = 'flex';
   const sUrl = document.getElementById('settings-url');
   if (sUrl) sUrl.value = GAS_URL;
-  renderFamilies();
-  renderReports();
-  renderDaily();
-  populateFamilySelect();
-  populateMonths();
+  renderFamilies(); renderReports(); renderDaily();
+  populateFamilySelect(); populateMonths();
   syncAll();
 }
 
-function saveSetup() {
-  const url = document.getElementById('setup-url').value.trim();
-  if (!url.startsWith('https://script.google.com')) {
-    alert('Please enter a valid Google Apps Script URL.');
-    return;
-  }
-  GAS_URL = url;
-  localStorage.setItem('sg_gas_url', url);
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  document.getElementById('settings-url').value = url;
-  populateFamilySelect();
-  populateMonths();
-  showPage('families', document.querySelector('.nav-item'));
-  syncAll();
+// ═══════════════════════════════════════════════
+//  HELPER: display name for any member record
+//  Single members have no wife field (empty/null)
+// ═══════════════════════════════════════════════
+function displayName(f) {
+  if (!f) return '—';
+  return (f.name2 && f.name2.trim()) ? f.name1 + ' & ' + f.name2 : f.name1;
+}
+
+function isSingle(f) {
+  return !f.name2 || !f.name2.trim();
 }
 
 // ═══════════════════════════════════════════════
@@ -624,7 +423,7 @@ function setSyncStatus(state, text) {
 async function gasRequest(action, data = {}) {
   if (!GAS_URL) throw new Error('No API URL configured');
   const params = new URLSearchParams({ action, ...Object.fromEntries(Object.entries(data).map(([k,v]) => [k, typeof v === 'object' ? JSON.stringify(v) : v])) });
-  const res = await fetch(GAS_URL + '?' + params.toString());
+  const res  = await fetch(GAS_URL + '?' + params.toString());
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const json = await res.json();
   if (!json.success) throw new Error(json.error || 'Unknown error');
@@ -634,36 +433,26 @@ async function gasRequest(action, data = {}) {
 async function syncAll() {
   setSyncStatus('gray', 'Syncing…');
   try {
-    const [fRes, pRes] = await Promise.all([
-      gasRequest('getFamilies'),
-      gasRequest('getPayments')
-    ]);
-    families = fRes.data;
-    payments = pRes.data;
+    const [fRes, pRes] = await Promise.all([gasRequest('getFamilies'), gasRequest('getPayments')]);
+    families = fRes.data; payments = pRes.data;
     saveLocal();
     setSyncStatus('green', 'Synced ' + new Date().toLocaleTimeString());
-    renderFamilies();
-    renderReports();
-    renderDaily();
-    populateFamilySelect();
+    renderFamilies(); renderReports(); renderDaily(); populateFamilySelect();
     toast('Synced with Google Sheets', 'success');
   } catch(e) {
     setSyncStatus('red', 'Sync failed');
-    toast('Sync failed: ' + e.message, 'error');
+    const hint = diagnoseError ? diagnoseError(e, 'sync') : e.message;
+    toast(hint, 'error');
+    // Show helpful toast sequence
+    if ((e.message||'').toLowerCase().includes('fetch') || (e.message||'').toLowerCase().includes('network')) {
+      setTimeout(() => toast('Tip: Go to Settings → Test Connection to diagnose the issue', 'info'), 3500);
+    }
   }
 }
 
-async function pushFamily(fam) {
-  return gasRequest('addFamily', { data: fam });
-}
-
-async function pushPayment(pay) {
-  return gasRequest('addPayment', { data: pay });
-}
-
-async function deleteRemoteFamily(id) {
-  return gasRequest('deleteFamily', { id });
-}
+async function pushFamily(fam)       { return gasRequest('addFamily',    { data: fam }); }
+async function pushPayment(pay)      { return gasRequest('addPayment',   { data: pay }); }
+async function deleteRemoteFamily(id){ return gasRequest('deleteFamily', { id }); }
 
 // ═══════════════════════════════════════════════
 //  LOCAL STORAGE
@@ -675,12 +464,8 @@ function saveLocal() {
 
 function clearCache() {
   if (!confirm('Clear all locally cached data? (Your Google Sheet data is safe.)')) return;
-  families = [];
-  payments = [];
-  saveLocal();
-  renderFamilies();
-  renderReports();
-  renderDaily();
+  families = []; payments = [];
+  saveLocal(); renderFamilies(); renderReports(); renderDaily();
   toast('Local cache cleared', 'info');
 }
 
@@ -688,7 +473,8 @@ function clearCache() {
 //  HELPERS
 // ═══════════════════════════════════════════════
 function initials(f) {
-  const p = f.husband.split(' ');
+  // Use husband (primary name) always
+  const p = (f.name1 || '?').split(' ');
   return (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase();
 }
 
@@ -718,6 +504,12 @@ function statusBadge(s) {
   return '<span class="badge badge-gray">No Record</span>';
 }
 
+function memberTypeBadge(f) {
+  return isSingle(f)
+    ? '<span class="badge badge-purple"><i class="fa-solid fa-person fa-xs"></i> Single</span>'
+    : '<span class="badge badge-blue"><i class="fa-solid fa-people-group fa-xs"></i> Family</span>';
+}
+
 function today() {
   return new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 }
@@ -730,33 +522,35 @@ function toast(msg, type='info') {
 }
 
 // ═══════════════════════════════════════════════
-//  RENDER FAMILIES
+//  RENDER FAMILIES / MEMBERS
 // ═══════════════════════════════════════════════
 function renderFamilies() {
   const q  = (document.getElementById('family-search')?.value || '').toLowerCase();
   const el = document.getElementById('families-list');
   if (!el) return;
   const filtered = families.filter(f =>
-    (f.husband + ' ' + f.wife + ' ' + f.address).toLowerCase().includes(q)
+    (f.name1 + ' ' + (f.name2||'') + ' ' + (f.address||'')).toLowerCase().includes(q)
   );
   if (!filtered.length) {
-    el.innerHTML = '<div class="empty"><i class="fa-solid fa-users-slash"></i><p>No families found</p></div>';
+    el.innerHTML = '<div class="empty"><i class="fa-solid fa-users-slash"></i><p>No members found</p></div>';
     return;
   }
   el.innerHTML = filtered.map(f => {
-    const st  = getStatus(f.id);
+    const st   = getStatus(f.id);
+    const single = isSingle(f);
     const kids = Array.isArray(f.children)
-      ? (f.children.length
-          ? f.children.map(c => typeof c === 'object' ? c.name : c).join(', ')
-          : 'No children')
+      ? (f.children.length ? f.children.map(c => typeof c==='object' ? c.name : c).join(', ') : 'No children')
       : (f.children || 'No children');
+    const avatarClass = single ? 'avatar single-avatar' : 'avatar';
+    const icon = single ? 'fa-solid fa-person' : 'fa-solid fa-people-group';
     return `<div class="family-card">
-      <div class="avatar">${initials(f)}</div>
+      <div class="${avatarClass}">${initials(f)}</div>
       <div class="family-info">
-        <div class="family-name">${f.husband} &amp; ${f.wife}</div>
+        <div class="family-name">${displayName(f)}</div>
         <div class="family-meta">${f.address || '—'} · ${kids}</div>
       </div>
       <div class="family-actions">
+        ${memberTypeBadge(f)}
         ${statusBadge(st)}
         <button class="btn btn-sm btn-icon" title="View" onclick="openFamilyModal(${f.id})"><i class="fa-solid fa-eye"></i></button>
         <button class="btn btn-sm btn-icon btn-danger" title="Delete" onclick="deleteFamily(${f.id})"><i class="fa-solid fa-trash"></i></button>
@@ -766,7 +560,7 @@ function renderFamilies() {
 }
 
 // ═══════════════════════════════════════════════
-//  FAMILY MODAL
+//  FAMILY / MEMBER MODAL
 // ═══════════════════════════════════════════════
 function formatBirthday(bday) {
   if (!bday) return '';
@@ -779,12 +573,13 @@ function openFamilyModal(id) {
   const f  = families.find(x => +x.id === +id);
   const fp = payments.filter(p => +p.familyId === +id).sort((a,b) => b.id - a.id);
   const st = getStatus(id);
+  const single = isSingle(f);
 
   const childrenHtml = Array.isArray(f.children) && f.children.length
     ? `<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
         ${f.children.map(c => {
-          const name  = typeof c === 'object' ? c.name : c;
-          const bday  = typeof c === 'object' ? (c.birthday || '') : '';
+          const name = typeof c==='object' ? c.name : c;
+          const bday = typeof c==='object' ? (c.birthday||'') : '';
           return `<div style="display:flex;align-items:center;gap:8px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:6px 10px;font-size:13px">
             <i class="fa-solid fa-child" style="color:var(--gray-400);font-size:13px"></i>
             <span style="font-weight:500">${name}</span>
@@ -796,24 +591,27 @@ function openFamilyModal(id) {
 
   document.getElementById('modal-body').innerHTML = `
     <div class="modal-title">
-      Family Details
+      Member Details
       <span class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
     </div>
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div class="avatar" style="width:50px;height:50px;font-size:16px">${initials(f)}</div>
+      <div class="${single ? 'avatar single-avatar' : 'avatar'}" style="width:50px;height:50px;font-size:16px">${initials(f)}</div>
       <div>
-        <div style="font-weight:600;font-size:15px">${f.husband} &amp; ${f.wife}</div>
+        <div style="font-weight:600;font-size:15px">${displayName(f)}</div>
         <div style="font-size:12px;color:var(--gray-400)">${f.address || '—'}</div>
       </div>
     </div>
-    ${statusBadge(st)}
-    <div style="margin:14px 0 4px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-400)">Children</div>
-    ${childrenHtml}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      ${memberTypeBadge(f)}
+      ${statusBadge(st)}
+    </div>
+    ${single ? '' : `<div style="margin:14px 0 4px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--gray-400)">Children</div>${childrenHtml}`}
+    ${!single ? '' : ''}
     <div class="card-title" style="margin-top:18px">Payment History</div>
     ${fp.length ? fp.slice(0,6).map(p => `
       <div class="day-entry">
         <div>
-          <div style="font-size:13px;font-weight:500">${p.type || '—'}${p.type === 'Membership' ? ` · ${p.periodFrom} – ${p.periodTo}` : ''}</div>
+          <div style="font-size:13px;font-weight:500">${p.type||'—'}${p.type==='Membership' ? ` · ${p.periodFrom} – ${p.periodTo}` : ''}</div>
           <div style="font-size:11px;color:var(--gray-400)">${p.date} · ${p.method}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
@@ -831,15 +629,16 @@ function openFamilyModal(id) {
   openModal();
 }
 
-const MONTH_NAMES_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
+// ═══════════════════════════════════════════════
+//  ADD / EDIT MEMBER MODAL  (single OR family)
+// ═══════════════════════════════════════════════
 function openAddFamilyModal(editId = null) {
-  const existing = editId ? families.find(x => +x.id === +editId) : null;
-  const title    = existing ? 'Edit Family' : 'Add New Family';
-  const btnLabel = existing ? 'Save Changes' : 'Add Family';
-  const btnFn    = existing ? `saveEditFamily(${editId})` : 'addFamily()';
-
-  // Pre-fill children if editing
+  const existing  = editId ? families.find(x => +x.id === +editId) : null;
+  const title     = existing ? 'Edit Member' : 'Add New Member';
+  const btnLabel  = existing ? 'Save Changes' : 'Add Member';
+  const btnFn     = existing ? `saveEditFamily(${editId})` : 'addFamily()';
+  // Determine initial member type
+  const initType  = existing ? (isSingle(existing) ? 'single' : 'family') : 'single';
   const existingChildren = existing && Array.isArray(existing.children) ? existing.children : [];
 
   document.getElementById('modal-body').innerHTML = `
@@ -847,11 +646,49 @@ function openAddFamilyModal(editId = null) {
       ${title}
       <span class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
     </div>
-    <div class="form-group"><label class="form-label">Husband's Full Name *</label><input id="nf-h" class="form-control" placeholder="e.g. Michael Haile" value="${existing?.husband||''}"></div>
-    <div class="form-group"><label class="form-label">Wife's Full Name *</label><input id="nf-w" class="form-control" placeholder="e.g. Sara Haile" value="${existing?.wife||''}"></div>
-    <div class="form-group"><label class="form-label">Address</label><input id="nf-a" class="form-control" placeholder="Street address, Louisville KY" value="${existing?.address||''}"></div>
+
+    <!-- Member type toggle -->
+    <div style="margin-bottom:14px">
+      <label class="form-label">Member Type</label>
+      <div class="member-type-toggle">
+        <button class="member-type-btn ${initType==='single'?'active':''}" id="type-single-btn" onclick="setMemberType('single')">
+          <i class="fa-solid fa-person"></i> Single / Individual
+        </button>
+        <button class="member-type-btn ${initType==='family'?'active':''}" id="type-family-btn" onclick="setMemberType('family')">
+          <i class="fa-solid fa-people-group"></i> Couple / Family
+        </button>
+      </div>
+      <div style="font-size:11px;color:var(--gray-400);margin-top:5px" id="type-hint">
+        ${initType==='single' ? 'Single, widowed, or any individual member.' : 'Married couple or family household.'}
+      </div>
+    </div>
+
+    <!-- Primary name — always shown, fully neutral -->
+    <div class="form-group">
+      <label class="form-label">Full Name *</label>
+      <input id="nf-h" class="form-control"
+        placeholder="First and last name"
+        value="${existing?.name1||''}">
+    </div>
+
+    <!-- Second person — only shown for Couple/Family -->
+    <div class="form-group" id="spouse-field" style="${initType==='single'?'display:none':''}">
+      <label class="form-label">
+        Spouse's Full Name
+        <span style="color:var(--gray-400);font-weight:400;margin-left:4px">(optional)</span>
+      </label>
+      <input id="nf-w" class="form-control"
+        placeholder="First and last name"
+        value="${existing?.name2||''}">
+    </div>
 
     <div class="form-group">
+      <label class="form-label">Address</label>
+      <input id="nf-a" class="form-control" placeholder="Street address, Louisville KY" value="${existing?.address||''}">
+    </div>
+
+    <!-- Children — hidden for single -->
+    <div class="form-group" id="children-section" style="${initType==='single'?'display:none':''}">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <label class="form-label" style="margin:0">Children</label>
         <button class="btn btn-sm" onclick="addChildRow()" type="button"><i class="fa-solid fa-plus"></i> Add Child</button>
@@ -861,61 +698,66 @@ function openAddFamilyModal(editId = null) {
     </div>
 
     <div style="display:flex;gap:8px;margin-top:4px">
-      <button id="add-fam-btn" class="btn btn-primary" style="flex:1" onclick="${btnFn}"><i class="fa-solid fa-user-plus"></i> ${btnLabel}</button>
+      <button id="add-fam-btn" class="btn btn-primary" style="flex:1" onclick="${btnFn}">
+        <i class="fa-solid fa-user-plus"></i> ${btnLabel}
+      </button>
       <button class="btn" onclick="closeModal()">Cancel</button>
     </div>`;
 
-  // Pre-populate existing children rows
-  existingChildren.forEach(c => {
-    const name  = typeof c === 'object' ? c.name  : c;
-    const bday  = typeof c === 'object' ? (c.birthday || '') : '';
-    addChildRow(name, bday);
-  });
+  // Pre-populate children rows if editing a family
+  if (initType === 'family') {
+    existingChildren.forEach(c => {
+      const name = typeof c==='object' ? c.name  : c;
+      const bday = typeof c==='object' ? (c.birthday||'') : '';
+      addChildRow(name, bday);
+    });
+  }
 
   openModal();
 }
 
+function setMemberType(type) {
+  document.getElementById('type-family-btn').classList.toggle('active', type === 'family');
+  document.getElementById('type-single-btn').classList.toggle('active', type === 'single');
+  document.getElementById('spouse-field').style.display     = type === 'single' ? 'none' : '';
+  document.getElementById('children-section').style.display = type === 'single' ? 'none' : '';
+  const hint = document.getElementById('type-hint');
+  if (hint) hint.textContent = type === 'single'
+    ? 'Single, widowed, or any individual member.'
+    : 'Married couple or family household.';
+}
+
 function monthOptions(selected) {
-  return MONTH_NAMES_SHORT.map((m, i) =>
-    `<option value="${i+1}" ${selected == i+1 ? 'selected' : ''}>${m}</option>`
-  ).join('');
+  return MONTH_NAMES_SHORT.map((m,i) =>
+    `<option value="${i+1}" ${selected==i+1?'selected':''}>${m}</option>`).join('');
 }
 
 function dayOptions(selected) {
   let opts = '<option value="">Day</option>';
-  for (let d = 1; d <= 31; d++) opts += `<option value="${d}" ${selected == d ? 'selected' : ''}>${d}</option>`;
+  for (let d=1; d<=31; d++) opts += `<option value="${d}" ${selected==d?'selected':''}>${d}</option>`;
   return opts;
 }
 
-function addChildRow(name = '', birthday = '') {
+function addChildRow(name='', birthday='') {
   const list  = document.getElementById('children-list');
   const noMsg = document.getElementById('no-children-msg');
   if (noMsg) noMsg.style.display = 'none';
-
-  // Parse birthday "MM-DD" or ""
-  const [bdMon, bdDay] = birthday ? birthday.split('-') : ['', ''];
-
+  const [bdMon, bdDay] = birthday ? birthday.split('-') : ['',''];
   const row = document.createElement('div');
   row.className = 'child-row';
   row.style.cssText = 'display:flex;align-items:center;gap:8px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:8px 10px;';
   row.innerHTML = `
     <i class="fa-solid fa-child" style="color:var(--gray-400);font-size:14px;flex-shrink:0"></i>
     <input type="text" class="form-control child-name" placeholder="Child's name" value="${name}" style="flex:2;min-width:0">
-    <select class="form-control child-bmon" style="flex:1;min-width:0">
-      <option value="">Month</option>${monthOptions(bdMon)}
-    </select>
-    <select class="form-control child-bday" style="flex:0 0 70px">
-      ${dayOptions(bdDay)}
-    </select>
+    <select class="form-control child-bmon" style="flex:1;min-width:0"><option value="">Month</option>${monthOptions(bdMon)}</select>
+    <select class="form-control child-bday" style="flex:0 0 70px">${dayOptions(bdDay)}</select>
     <button type="button" onclick="removeChildRow(this)" class="btn btn-sm btn-icon btn-danger" style="flex-shrink:0"><i class="fa-solid fa-xmark"></i></button>`;
   list.appendChild(row);
 }
 
 function removeChildRow(btn) {
-  const row  = btn.closest('.child-row');
-  const list = document.getElementById('children-list');
-  row.remove();
-  if (!list.querySelector('.child-row')) {
+  btn.closest('.child-row').remove();
+  if (!document.getElementById('children-list').querySelector('.child-row')) {
     const noMsg = document.getElementById('no-children-msg');
     if (noMsg) noMsg.style.display = 'block';
   }
@@ -935,56 +777,51 @@ function collectChildren() {
   return children;
 }
 
+// Determine if form is in single mode
+function formIsSingle() {
+  return document.getElementById('type-single-btn')?.classList.contains('active');
+}
+
 async function addFamily() {
-  const h = document.getElementById('nf-h').value.trim();
-  const w = document.getElementById('nf-w').value.trim();
+  const h = document.getElementById('nf-h').value.trim(); // name1
+  const w = formIsSingle() ? '' : (document.getElementById('nf-w')?.value.trim() || '');
   const a = document.getElementById('nf-a').value.trim();
-  if (!h || !w) { toast('Please enter both names.', 'error'); return; }
-  const children = collectChildren();
+  if (!h) { toast('Please enter the member name.', 'error'); return; }
+  const children = formIsSingle() ? [] : collectChildren();
   const btn = document.getElementById('add-fam-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Saving…';
   const newId = families.length ? Math.max(...families.map(f => +f.id)) + 1 : 1;
-  const fam = {
-    id: newId, husband: h, wife: w, address: a || '',
-    children,
-    createdAt: new Date().toISOString()
-  };
+  const fam = { id: newId, name1: h, name2: w, address: a||'', children, createdAt: new Date().toISOString() };
   try {
     await pushFamily(fam);
     families.push(fam);
-    saveLocal();
-    closeModal();
-    renderFamilies();
-    populateFamilySelect();
-    toast('Family added and saved to Google Sheets!', 'success');
+    saveLocal(); closeModal(); renderFamilies(); populateFamilySelect();
+    toast((w ? 'Family' : 'Member') + ' added and saved to Google Sheets!', 'success');
   } catch(e) {
     toast('Error saving: ' + e.message, 'error');
     btn.disabled = false;
-    btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Add Family';
+    btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Add Member';
   }
 }
 
 async function saveEditFamily(id) {
-  const h = document.getElementById('nf-h').value.trim();
-  const w = document.getElementById('nf-w').value.trim();
+  const h = document.getElementById('nf-h').value.trim(); // name1
+  const w = formIsSingle() ? '' : (document.getElementById('nf-w')?.value.trim() || '');
   const a = document.getElementById('nf-a').value.trim();
-  if (!h || !w) { toast('Please enter both names.', 'error'); return; }
-  const children = collectChildren();
+  if (!h) { toast('Please enter the member name.', 'error'); return; }
+  const children = formIsSingle() ? [] : collectChildren();
   const btn = document.getElementById('add-fam-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Saving…';
-  const idx = families.findIndex(f => +f.id === +id);
-  const updated = { ...families[idx], husband: h, wife: w, address: a || '', children };
+  const idx  = families.findIndex(f => +f.id === +id);
   const prev = families[idx];
+  const updated = { ...families[idx], name1: h, name2: w, address: a||'', children };
   families[idx] = updated;
   try {
     await gasRequest('updateFamily', { data: updated });
-    saveLocal();
-    closeModal();
-    renderFamilies();
-    populateFamilySelect();
-    toast('Family updated!', 'success');
+    saveLocal(); closeModal(); renderFamilies(); populateFamilySelect();
+    toast('Member updated!', 'success');
   } catch(e) {
     families[idx] = prev;
     toast('Error saving: ' + e.message, 'error');
@@ -995,14 +832,12 @@ async function saveEditFamily(id) {
 
 async function deleteFamily(id) {
   const f = families.find(x => +x.id === +id);
-  if (!confirm(`Remove ${f?.husband} & ${f?.wife}?`)) return;
+  if (!confirm(`Remove ${displayName(f)}?`)) return;
   try {
     await deleteRemoteFamily(id);
     families = families.filter(x => +x.id !== +id);
-    saveLocal();
-    renderFamilies();
-    populateFamilySelect();
-    toast('Family removed.', 'success');
+    saveLocal(); renderFamilies(); populateFamilySelect();
+    toast('Member removed.', 'success');
   } catch(e) {
     toast('Error: ' + e.message, 'error');
   }
@@ -1015,8 +850,8 @@ function populateFamilySelect() {
   const sel = document.getElementById('pay-family');
   if (!sel) return;
   const cur = sel.value;
-  sel.innerHTML = '<option value="">— Select a family —</option>' +
-    families.map(f => `<option value="${f.id}">${f.husband} &amp; ${f.wife}</option>`).join('');
+  sel.innerHTML = '<option value="">— Select a member or family —</option>' +
+    families.map(f => `<option value="${f.id}">${displayName(f)}</option>`).join('');
   if (cur) sel.value = cur;
 }
 
@@ -1042,7 +877,7 @@ function preselectFamily(id) {
 }
 
 function onTypeChange() {
-  const type = document.getElementById('pay-type')?.value;
+  const type    = document.getElementById('pay-type')?.value;
   const section = document.getElementById('month-range-section');
   if (section) section.style.display = (type === 'Membership') ? 'block' : 'none';
   updatePaySummary();
@@ -1077,7 +912,7 @@ async function processPayment() {
   const to     = document.getElementById('pay-to')?.value;
   const amt    = parseFloat(document.getElementById('pay-amount').value);
   const method = document.getElementById('pay-method').value;
-  if (!fid || !type) { toast('Please select a family and payment type.', 'error'); return; }
+  if (!fid || !type) { toast('Please select a member and payment type.', 'error'); return; }
   if (isNaN(amt) || amt <= 0) { toast('Please enter a valid amount.', 'error'); return; }
   if (type === 'Membership' && (!from || !to || monthDiff(from, to) < 1)) {
     toast('Please select a valid month range for Membership.', 'error'); return;
@@ -1087,13 +922,10 @@ async function processPayment() {
   btn.innerHTML = '<span class="spinner"></span> Processing…';
   const pid = payments.length ? Math.max(...payments.map(p => +p.id)) + 1 : 1001;
   const pay = {
-    id: pid, familyId: fid,
-    date: today(),
-    type,
+    id: pid, familyId: fid, date: today(), type,
     periodFrom: type === 'Membership' ? from : '—',
     periodTo:   type === 'Membership' ? to   : '—',
-    amount: amt, method,
-    timestamp: Date.now()
+    amount: amt, method, timestamp: Date.now()
   };
   try {
     await pushPayment(pay);
@@ -1101,10 +933,8 @@ async function processPayment() {
     saveLocal();
     document.getElementById('pay-amount').value = '';
     document.getElementById('pay-type').value = '';
-    onTypeChange();
-    updatePaySummary();
-    renderDaily();
-    renderReports();
+    onTypeChange(); updatePaySummary();
+    renderDaily(); renderReports();
     toast('Payment recorded!', 'success');
     showReceipt(pay);
   } catch(e) {
@@ -1119,10 +949,11 @@ async function processPayment() {
 // ═══════════════════════════════════════════════
 function showReceipt(pay) {
   if (!pay) return;
-  const f       = families.find(x => +x.id === +pay.familyId);
-  const isMem   = pay.type === 'Membership';
-  const diff    = isMem ? monthDiff(pay.periodFrom, pay.periodTo) : null;
-  const pm      = isMem ? (parseFloat(pay.amount) / diff).toFixed(2) : null;
+  const f     = families.find(x => +x.id === +pay.familyId);
+  const isMem = pay.type === 'Membership';
+  const diff  = isMem ? monthDiff(pay.periodFrom, pay.periodTo) : null;
+  const pm    = isMem ? (parseFloat(pay.amount) / diff).toFixed(2) : null;
+  const name  = f ? displayName(f) : '—';
   document.getElementById('modal-body').innerHTML = `
     <div class="modal-title">
       Receipt
@@ -1138,8 +969,8 @@ function showReceipt(pay) {
       <div class="receipt-center" style="font-size:11px;color:var(--gray-600);margin-bottom:8px">OFFICIAL RECEIPT — ${(pay.type||'PAYMENT').toUpperCase()}</div>
       <div class="receipt-row"><span>Receipt #</span><strong>#${pay.id}</strong></div>
       <div class="receipt-row"><span>Date</span><strong>${pay.date}</strong></div>
-      <div class="receipt-row"><span>Family</span><strong>${f ? f.husband + ' & ' + f.wife : '—'}</strong></div>
-      <div class="receipt-row"><span>Payment Type</span><strong>${pay.type || '—'}</strong></div>
+      <div class="receipt-row"><span>Name</span><strong>${name}</strong></div>
+      <div class="receipt-row"><span>Payment Type</span><strong>${pay.type||'—'}</strong></div>
       ${isMem ? `
       <div class="receipt-row"><span>Period</span><strong>${pay.periodFrom} – ${pay.periodTo}</strong></div>
       <div class="receipt-row"><span>Months</span><strong>${diff}</strong></div>
@@ -1173,32 +1004,25 @@ function printReceipt(pid) {
   const isMem = pay.type === 'Membership';
   const diff  = isMem ? monthDiff(pay.periodFrom, pay.periodTo) : null;
   const pm    = isMem ? (parseFloat(pay.amount) / diff).toFixed(2) : null;
-  const w     = window.open('', '', 'width=440,height=700');
+  const name  = f ? displayName(f) : '—';
+  const w = window.open('', '', 'width=440,height=700');
   w.document.write(`<!DOCTYPE html><html><head><title>Receipt #${pay.id}</title>
-  <style>
-    body{font-family:'Courier New',monospace;padding:32px;font-size:13px;line-height:1.9;color:#222;}
-    h2{text-align:center;font-size:22px;letter-spacing:2px;margin:0;}
-    .sub{text-align:center;font-size:12px;color:#666;margin:2px 0;}
-    .div{border-top:1px dashed #aaa;margin:12px 0;}
-    .row{display:flex;justify-content:space-between;}
-    .total{text-align:center;padding:8px 0;}
-    .amt{font-size:30px;font-weight:700;color:#3B6D11;}
-    .sig{margin-top:20px;font-size:12px;color:#555;}
-    .verse{text-align:center;font-size:11px;color:#777;font-style:italic;line-height:1.7;}
-  </style>
+  <style>body{font-family:'Courier New',monospace;padding:32px;font-size:13px;line-height:1.9;color:#222;}
+  h2{text-align:center;font-size:22px;letter-spacing:2px;margin:0;}.sub{text-align:center;font-size:12px;color:#666;margin:2px 0;}
+  .div{border-top:1px dashed #aaa;margin:12px 0;}.row{display:flex;justify-content:space-between;}
+  .total{text-align:center;padding:8px 0;}.amt{font-size:30px;font-weight:700;color:#3B6D11;}
+  .sig{margin-top:20px;font-size:12px;color:#555;}.verse{text-align:center;font-size:11px;color:#777;font-style:italic;line-height:1.7;}</style>
   </head><body>
-  <h2>ST GABRIEL</h2>
-  <div class="sub">Ethiopian Orthodox Church</div>
+  <h2>ST GABRIEL</h2><div class="sub">Ethiopian Orthodox Church</div>
   <div class="sub">2216 Goldsmith Lane · Louisville, KY 40218</div>
   <div class="div"></div>
   <div class="sub">OFFICIAL RECEIPT — ${(pay.type||'PAYMENT').toUpperCase()}</div>
   <div class="div"></div>
   <div class="row"><span>Receipt #</span><strong>#${pay.id}</strong></div>
   <div class="row"><span>Date</span><strong>${pay.date}</strong></div>
-  <div class="row"><span>Family</span><strong>${f ? f.husband+' & '+f.wife : '—'}</strong></div>
+  <div class="row"><span>Name</span><strong>${name}</strong></div>
   <div class="row"><span>Payment Type</span><strong>${pay.type||'—'}</strong></div>
-  ${isMem ? `
-  <div class="row"><span>Period</span><strong>${pay.periodFrom} – ${pay.periodTo}</strong></div>
+  ${isMem ? `<div class="row"><span>Period</span><strong>${pay.periodFrom} – ${pay.periodTo}</strong></div>
   <div class="row"><span>Months</span><strong>${diff}</strong></div>
   <div class="row"><span>Per Month</span><strong>$${pm}</strong></div>` : ''}
   <div class="row"><span>Method</span><strong>${pay.method}</strong></div>
@@ -1233,10 +1057,10 @@ function renderDaily() {
   }
   el.innerHTML = tp.map(p => {
     const f = families.find(x => +x.id === +p.familyId);
-    const detail = p.type === 'Membership' ? `${p.periodFrom} – ${p.periodTo}` : (p.type || '—');
+    const detail = p.type === 'Membership' ? `${p.periodFrom} – ${p.periodTo}` : (p.type||'—');
     return `<div class="day-entry">
       <div>
-        <div style="font-weight:600;font-size:13px">${f ? f.husband + ' & ' + f.wife : 'Unknown'}</div>
+        <div style="font-weight:600;font-size:13px">${f ? displayName(f) : 'Unknown'}</div>
         <div style="font-size:11px;color:var(--gray-400)">${detail} · ${p.method}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
@@ -1256,10 +1080,8 @@ function renderReports() {
   const now   = new Date();
   const curM  = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
   const paidM = new Set(payments.filter(p => {
-    try { return monthDiff(p.periodFrom, curM) >= 1 && monthDiff(curM, p.periodTo) >= 1; }
-    catch(e) { return false; }
+    try { return monthDiff(p.periodFrom, curM) >= 1 && monthDiff(curM, p.periodTo) >= 1; } catch(e) { return false; }
   }).map(p => p.familyId)).size;
-
   const totEl = document.getElementById('rpt-total');
   const monEl = document.getElementById('rpt-month');
   const famEl = document.getElementById('rpt-families');
@@ -1268,7 +1090,6 @@ function renderReports() {
   if (monEl) monEl.textContent = paidM;
   if (famEl) famEl.textContent = families.length;
   if (payEl) payEl.textContent = payments.length;
-
   const el = document.getElementById('report-table');
   if (!el) return;
   if (!payments.length) {
@@ -1278,16 +1099,17 @@ function renderReports() {
   const sorted = [...payments].sort((a,b) => b.id - a.id);
   el.innerHTML = `<table>
     <thead><tr>
-      <th>#</th><th>Date</th><th>Family</th><th>Type</th><th>Period</th><th>Method</th>
+      <th>#</th><th>Date</th><th>Name</th><th>Type</th><th>Period</th><th>Method</th>
       <th style="text-align:right">Amount</th><th></th>
     </tr></thead>
     <tbody>${sorted.map(p => {
       const f      = families.find(x => +x.id === +p.familyId);
       const period = p.type === 'Membership' ? `${p.periodFrom} – ${p.periodTo}` : '—';
+      const name   = f ? (isSingle(f) ? f.name1.split(' ')[0] : f.name1.split(' ')[0] + ' family') : '—';
       return `<tr>
         <td style="color:var(--gray-400);font-size:12px">${p.id}</td>
         <td style="font-size:12px;color:var(--gray-600)">${p.date}</td>
-        <td>${f ? f.husband.split(' ')[0]+' family' : '—'}</td>
+        <td>${name}</td>
         <td><span class="badge badge-blue">${p.type||'—'}</span></td>
         <td style="font-size:12px;color:var(--gray-600)">${period}</td>
         <td><span class="badge badge-gray">${p.method}</span></td>
@@ -1302,10 +1124,10 @@ function renderReports() {
 //  EXPORT CSV
 // ═══════════════════════════════════════════════
 function exportCSV() {
-  const rows = [['Receipt#','Date','Family','Type','PeriodFrom','PeriodTo','Amount','Method']];
+  const rows = [['Receipt#','Date','Name','Type','PeriodFrom','PeriodTo','Amount','Method']];
   payments.forEach(p => {
     const f = families.find(x => +x.id === +p.familyId);
-    rows.push([p.id, p.date, f ? f.husband + ' & ' + f.wife : '?', p.type||'—', p.periodFrom||'—', p.periodTo||'—', parseFloat(p.amount).toFixed(2), p.method]);
+    rows.push([p.id, p.date, f ? displayName(f) : '?', p.type||'—', p.periodFrom||'—', p.periodTo||'—', parseFloat(p.amount).toFixed(2), p.method]);
   });
   const csv  = rows.map(r => r.map(v=>`"${v}"`).join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
@@ -1326,16 +1148,100 @@ function saveSettings() {
   toast('URL saved!', 'success');
 }
 
-async function testConnection() {
-  const url = document.getElementById('settings-url').value.trim();
-  if (!url) { toast('Enter a URL first.', 'error'); return; }
+function resetConnStatus() {
+  const dot  = document.getElementById('conn-dot');
+  const text = document.getElementById('conn-status-text');
+  const box  = document.getElementById('conn-status-box');
+  if (dot)  dot.className  = 'sync-dot gray';
+  if (text) text.textContent = 'Not tested — click Test Connection';
+  if (box)  box.style.background = 'var(--gray-100)';
+}
+
+async function testConnectionFull() {
+  const url  = document.getElementById('settings-url').value.trim();
+  const dot  = document.getElementById('conn-dot');
+  const text = document.getElementById('conn-status-text');
+  const box  = document.getElementById('conn-status-box');
+  const btn  = document.getElementById('test-btn');
+
+  if (!url) {
+    toast('Please enter your Apps Script URL first.', 'error');
+    return;
+  }
+  if (!url.includes('script.google.com')) {
+    setConnStatus('red', '✗ That does not look like a Google Apps Script URL. It should start with https://script.google.com/macros/s/');
+    return;
+  }
+  if (!url.endsWith('/exec')) {
+    setConnStatus('red', '✗ URL must end in /exec — you may have copied the edit URL instead of the deployment URL.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="border-top-color:var(--blue);border-color:rgba(0,0,0,0.15)"></span> Testing…';
+  setConnStatus('gray', 'Connecting to Google Sheets…');
+
   GAS_URL = url;
   try {
-    await gasRequest('getFamilies');
-    toast('Connection successful!', 'success');
+    await gasRequest('ping');
+    // ping succeeded — now try real data
+    try {
+      const res = await gasRequest('getFamilies');
+      setConnStatus('green', '✓ Connected successfully! Found ' + (res.data?.length || 0) + ' member records in your sheet.');
+      localStorage.setItem('sg_gas_url', url);
+      toast('Connected! Click Force Sync to load your data.', 'success');
+    } catch(e2) {
+      setConnStatus('red', diagnoseError(e2, 'getFamilies'));
+    }
   } catch(e) {
-    toast('Connection failed: ' + e.message, 'error');
+    setConnStatus('red', diagnoseError(e, 'ping'));
   }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-plug"></i> Test Connection';
+}
+
+function setConnStatus(state, message) {
+  const dot  = document.getElementById('conn-dot');
+  const text = document.getElementById('conn-status-text');
+  const box  = document.getElementById('conn-status-box');
+  if (dot)  dot.className = 'sync-dot ' + state;
+  if (text) text.textContent = message;
+  if (box) {
+    box.style.background = state === 'green' ? 'var(--green-pale)' : state === 'red' ? 'var(--red-pale)' : 'var(--gray-100)';
+    box.style.borderColor = state === 'green' ? '#A5CC7A' : state === 'red' ? '#F7C1C1' : 'var(--gray-200)';
+    text.style.color = state === 'green' ? 'var(--green-dark)' : state === 'red' ? 'var(--red)' : 'var(--gray-600)';
+  }
+}
+
+function diagnoseError(e, action) {
+  const msg = (e.message || String(e)).toLowerCase();
+  if (msg.includes('failed to fetch') || msg.includes('networkerror') || msg.includes('load failed')) {
+    return '✗ Network error — cannot reach Google. Check your internet connection.';
+  }
+  if (msg.includes('404') || msg.includes('not found')) {
+    return '✗ URL not found (404) — the deployment may have been deleted. Create a new deployment and copy a fresh /exec URL.';
+  }
+  if (msg.includes('403') || msg.includes('forbidden') || msg.includes('unauthorized')) {
+    return '✗ Access denied (403) — the deployment is set to "Only me". Re-deploy and set Who has access to "Anyone".';
+  }
+  if (msg.includes('cors') || msg.includes('cross-origin')) {
+    return '✗ CORS error — make sure the script is deployed as a Web App (not as an API executable). Choose Type: Web app when deploying.';
+  }
+  if (msg.includes('sheet') && msg.includes('not found')) {
+    return '✗ Sheet tab missing — make sure your spreadsheet has tabs named exactly: Families, Payments, Config';
+  }
+  if (msg.includes('unknown action')) {
+    return '✗ Script is running but missing actions — make sure you pasted the full google_apps_script.js code and saved it.';
+  }
+  if (msg.includes('script') || msg.includes('error')) {
+    return '✗ Script error: ' + e.message + ' — check the Apps Script editor for red error markers.';
+  }
+  return '✗ Connection failed: ' + e.message;
+}
+
+async function testConnection() {
+  return testConnectionFull();
 }
 
 // ═══════════════════════════════════════════════
@@ -1346,16 +1252,14 @@ function showPage(name, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   if (el) el.classList.add('active');
-  const titles = { families:'Families', payments:'Collect Fees', daily:'Daily Collections', reports:'Payment Report', settings:'Settings' };
+  const titles = { families:'Members', payments:'Collect Fees', daily:'Daily Collections', reports:'Payment Report', settings:'Settings' };
   document.getElementById('page-title').textContent = titles[name] || name;
   const tb = document.getElementById('topbar-btn');
   if (name === 'families') {
-    tb.innerHTML = `<button class="btn btn-primary" onclick="openAddFamilyModal()"><i class="fa-solid fa-user-plus"></i> Add Family</button>`;
+    tb.innerHTML = `<button class="btn btn-primary" onclick="openAddFamilyModal()"><i class="fa-solid fa-user-plus"></i> Add Member</button>`;
   } else if (name === 'reports') {
     tb.innerHTML = `<button class="btn" onclick="syncAll()"><i class="fa-solid fa-rotate"></i> Sync</button>`;
-  } else {
-    tb.innerHTML = '';
-  }
+  } else { tb.innerHTML = ''; }
   if (name === 'daily') renderDaily();
   if (name === 'reports') renderReports();
   if (name === 'payments') { populateFamilySelect(); populateMonths(); }
@@ -1375,3 +1279,4 @@ init();
 </script>
 </body>
 </html>
+
